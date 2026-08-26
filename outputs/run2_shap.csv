@@ -1,0 +1,9 @@
+Feature_Group,Mean_Absolute_SHAP
+thermal_time,[6.14122745e-10]
+historical_soil_moisture,[3.56711465e-10]
+soil_temperature,[2.91347251e-10]
+humidity_vpd,[2.70913179e-10]
+radiation,[9.42848737e-11]
+pv_shade,[9.13272606e-11]
+temperature,[9.08014851e-11]
+rainfall,[7.58867571e-11]

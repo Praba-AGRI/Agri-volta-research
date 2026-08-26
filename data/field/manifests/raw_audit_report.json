@@ -1,0 +1,61 @@
+{
+  "field_2026_v1_manuscript": {
+    "zone_A": {
+      "dataset_name": "field_2026_v1_Zone_A",
+      "files_count": 32,
+      "expected_rows": 9216,
+      "observed_rows": 9216,
+      "unparseable_timestamps": 0,
+      "duplicate_timestamps": 0,
+      "invalid_sensor_flags": 0,
+      "valid_rows": 9216,
+      "completeness_percent": 100.0,
+      "start_timestamp": "2026-07-22 00:00:00",
+      "end_timestamp": "2026-08-22 23:55:00"
+    },
+    "zone_B": {
+      "dataset_name": "field_2026_v1_Zone_B",
+      "files_count": 32,
+      "expected_rows": 9216,
+      "observed_rows": 9216,
+      "unparseable_timestamps": 0,
+      "duplicate_timestamps": 0,
+      "invalid_sensor_flags": 0,
+      "valid_rows": 9216,
+      "completeness_percent": 100.0,
+      "start_timestamp": "2026-07-22 00:00:00",
+      "end_timestamp": "2026-08-22 23:55:00"
+    },
+    "total_observed": 18432
+  },
+  "field_2026_v2_september": {
+    "zone_A": {
+      "dataset_name": "field_2026_v2_september_Zone_A",
+      "files_count": 62,
+      "expected_rows": 51120,
+      "observed_rows": 30816,
+      "unparseable_timestamps": 0,
+      "duplicate_timestamps": 0,
+      "invalid_sensor_flags": 0,
+      "valid_rows": 30816,
+      "completeness_percent": 60.28,
+      "start_timestamp": "2026-07-22 00:00:00",
+      "end_timestamp": "2026-09-30 23:58:00"
+    },
+    "zone_B": {
+      "dataset_name": "field_2026_v2_september_Zone_B",
+      "files_count": 62,
+      "expected_rows": 51120,
+      "observed_rows": 30816,
+      "unparseable_timestamps": 0,
+      "duplicate_timestamps": 0,
+      "invalid_sensor_flags": 0,
+      "valid_rows": 30816,
+      "completeness_percent": 60.28,
+      "start_timestamp": "2026-07-22 00:00:00",
+      "end_timestamp": "2026-09-30 23:58:00"
+    },
+    "total_observed": 61632
+  },
+  "grand_total_observed": 80064
+}

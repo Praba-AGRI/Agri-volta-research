@@ -1,0 +1,15 @@
+{
+    "experiment_id": "AGV-001",
+    "experiment_name": "Agrivoltaic Microclimate Study",
+    "crop": "Cowpea (Vigna unguiculata)",
+    "field_site": "Research Farm, Block B",
+    "start_date": "2026-07-22",
+    "end_date": "2026-08-22",
+    "total_campaign_end_date": "2026-09-30",
+    "zone_A_description": "Open Field Control (Full Sun)",
+    "zone_B_description": "Agrivoltaic PV Shaded Canopy",
+    "sampling_interval": 120,
+    "active": false,
+    "status": "FINISHED",
+    "dataset_version": "field_2026_v1"
+}

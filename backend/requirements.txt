@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+websockets
+pydantic
+pydantic-settings
+aiomqtt
+influxdb-client
+sqlalchemy
+psycopg2-binary
+paho-mqtt
+pandas
+numpy
+scipy
+scikit-learn
+fastparquet
+pyarrow
+httpx

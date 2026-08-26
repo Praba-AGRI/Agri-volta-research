@@ -1,0 +1,93 @@
+soil:
+  representation:
+    model: "root_zone_bucket"
+    timestep_minutes: 5
+
+  hydraulic_properties:
+    texture_class: "sandy_loam"
+
+    theta_wilting_point:
+      nominal: 0.12
+      minimum: 0.08
+      maximum: 0.18
+
+    theta_field_capacity:
+      nominal: 0.27
+      minimum: 0.22
+      maximum: 0.32
+
+    theta_saturation:
+      nominal: 0.42
+      minimum: 0.38
+      maximum: 0.48
+
+    bulk_density_g_cm3:
+      nominal: 1.45
+      minimum: 1.30
+      maximum: 1.60
+
+  root_zone:
+    depth_m:
+      initial: 0.30
+      mid: 0.45
+      late: 0.60
+    dynamic_root_depth: true
+
+  infiltration:
+    capacity_mm_h:
+      nominal: 25.0
+      minimum: 10.0
+      maximum: 50.0
+
+  drainage:
+    enabled: true
+    drainage_coefficient_per_hour: 0.20
+
+  runoff:
+    enabled: true
+
+  water_balance:
+    equation:
+      storage_change: >
+        effective_precipitation + irrigation - ETc
+        - drainage - runoff
+    closure_check: true
+    absolute_tolerance_mm: 0.001
+
+initial_conditions:
+  soil_moisture:
+    initialization_method: "random_within_safe_root_zone"
+    fraction_of_field_capacity:
+      minimum: 0.80
+      maximum: 1.00
+
+  zone_specific:
+    zone_a:
+      calibration_offset: 0.0
+    zone_b:
+      calibration_offset: 0.0
+
+water_demand:
+  separation:
+    enabled: true
+    components:
+      - "soil_evaporation"
+      - "crop_transpiration"
+
+  soil_evaporation:
+    shading_suppression:
+      enabled: true
+    zone_b_relative_factor:
+      minimum: 0.55
+      nominal: 0.70
+      maximum: 0.85
+
+  crop_transpiration:
+    controlled_by:
+      - "ET_demand"
+      - "Kc"
+      - "water_stress"
+      - "canopy_factor"
+
+  total_ETc:
+    equation: "ETc = soil_evaporation + crop_transpiration"

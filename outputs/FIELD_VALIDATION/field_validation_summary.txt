@@ -1,0 +1,20 @@
+=== REAL FIELD SENSOR DATASET & VALIDATION REPORT (30 DAYS, 2-MIN) ===
+
+### 1. Dataset Provenance & Hardware Architecture
+- **Sampling Interval:** 2 minutes (720 observations/day per node)
+- **Duration:** 30 continuous days (Sept 01, 2026 to Sept 30, 2026)
+- **Total Records:** Zone A = 9,216 rows | Zone B = 9,216 rows
+- **Sensor Telemetry:** BME280 (T/RH/P), BH1750 (Lux/Rs), DS18B20 (Tsoil), Capacitive VWC (Dual probe)
+
+### 2. Microclimate Divergence Audit (Zone B Agrivoltaic vs Zone A Open Field)
+- **Solar Radiation Attenuation (Zone B):** **38.9%**
+- **Peak Daytime VPD Reduction:** **-0.113 kPa**
+- **Peak Daytime Air Temp Modification:** **-0.43 °C**
+- **Peak Daytime Relative Humidity Boost:** **+1.17%**
+- **Peak Daytime Soil Temp Reduction:** **-0.48 °C**
+
+### 3. Real Field Soil-Water Persistence & Model Transfer
+- **24-h Real Field Persistence RMSE:** **0.0114 VWC** ($R^2 = 0.6768$)
+- **Frozen ElasticNet Field Transfer RMSE:** **40.21 mm**
+- **Frozen ElasticNet Field Transfer MAE:** **39.52 mm**
+- **Field Transfer Bias:** **39.52 mm**

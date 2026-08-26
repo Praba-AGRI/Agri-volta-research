@@ -1,0 +1,196 @@
+irrigation:
+  thresholds:
+    critical_theta:
+      method: "fixed_value"
+      value: 0.2025
+      fixed_before_simulation: true
+
+    buffer_theta:
+      method: "fixed_value"
+      value: 0.2200
+      fixed_before_simulation: true
+
+  irrigation_application:
+    decision_hour: 6
+    target_moisture:
+      method: "field_capacity"
+
+    application_efficiency:
+      nominal: 0.90
+      minimum: 0.80
+      maximum: 0.95
+
+    maximum_event_depth_mm:
+      nominal: 20.0
+      maximum: 30.0
+
+    irrigation_delay_minutes:
+      nominal: 5
+
+    infiltration_limited: true
+
+    event_volume_equation: >
+      IR_mm = min(max(0, ETc - P_effective), (theta_field_capacity - theta_current) * root_zone_depth_mm)
+
+policies:
+  baseline_1_fixed:
+    name: "Fixed Calendar"
+    enabled: true
+    primary_schedule:
+      interval_days: 3
+      depth_mm: 15.0
+    represents: "Traditional fixed-calendar irrigation"
+
+  baseline_2_threshold:
+    name: "Threshold IoT"
+    enabled: true
+    trigger:
+      condition: "observed_theta < theta_critical"
+    amount:
+      method: "same_refill_equation_as_proposed"
+    uses_forecast: false
+    represents: "Threshold-based IoT irrigation"
+
+  proposed_ai:
+    name: "AI-Guided Dynamic Agrivoltaic Irrigation"
+    enabled: true
+    forecast:
+      horizon_hours: 24
+    et0_reference:
+      method: "rolling_mean"
+      window_days: 7
+      availability: "previous_completed_days_only"
+      warmup: "AI_not_active_until_7_completed_days"
+    decision_logic:
+      rule_1:
+        condition: "forecast_theta < theta_critical"
+        action: "IRRIGATE_NOW"
+        priority: 1
+      rule_2:
+        condition: >
+          theta_critical <= forecast_theta < theta_buffer
+          AND ET0_current >= ET0_mean_7d
+        action: "IRRIGATE_NOW"
+        priority: 2
+      rule_3:
+        condition: >
+          theta_critical <= forecast_theta < theta_buffer
+          AND ET0_current < ET0_mean_7d
+        action: "DELAY_24H"
+        priority: 3
+      rule_4:
+        condition: "forecast_theta >= theta_buffer"
+        action: "HOLD"
+        priority: 4
+    amount:
+      method: "event_volume_equation"
+
+counterfactual:
+  policies:
+    - "baseline_1_fixed"
+    - "baseline_2_threshold"
+    - "proposed_ai"
+
+  independent_trajectories: true
+  shared_initial_conditions:
+    weather: true
+    soil: true
+    crop: true
+    initial_moisture: true
+    geometry: true
+
+  policy_specific_state:
+    soil_moisture: true
+    drainage: true
+    runoff: true
+    biomass: true
+    canopy: true
+    yield: true
+    irrigation_history: true
+
+  rule:
+    never_reuse_one_policy_soil_trajectory_for_another: true
+
+evaluation:
+  water_use:
+    total_applied_irrigation_mm: true
+    irrigation_events: true
+    mean_event_depth_mm: true
+    irrigation_frequency: true
+    savings:
+      proposed_vs_fixed:
+        equation: >
+          100 * (Water_fixed - Water_proposed)
+          / Water_fixed
+      proposed_vs_threshold:
+        equation: >
+          100 * (Water_threshold - Water_proposed)
+          / Water_threshold
+
+  agronomic_safety:
+    outputs:
+      - "final_biomass_g_plant"
+      - "pod_yield_g_plant"
+      - "stress_days"
+      - "cumulative_stress"
+      - "phenology_dates"
+    primary_comparison:
+      proposed_vs_baseline_2: true
+
+statistics:
+  paired_design:
+    enabled: true
+    pairing_unit: "season"
+  normality_check:
+    enabled: true
+  comparisons:
+    primary:
+      method: "TOST_equivalence"
+      comparison:
+        treatment: "proposed_ai"
+        reference: "baseline_2_threshold"
+      yield_equivalence_margin_percent: 5.0
+      biomass_equivalence_margin_percent: 5.0
+    secondary:
+      paired_difference_test:
+        enabled: true
+  confidence_level: 0.95
+  report:
+    - "mean"
+    - "median"
+    - "SD"
+    - "95% CI"
+    - "effect_size"
+    - "TOST_p_value"
+
+sensitivity:
+  enabled: true
+  parameters:
+    shade_transmission:
+      low: 0.55
+      nominal: 0.60
+      high: 0.65
+    rainfall_interception:
+      low: 0.00
+      nominal: 0.10
+      high: 0.25
+    soil_field_capacity:
+      low: 0.22
+      nominal: 0.27
+      high: 0.32
+    root_zone_depth:
+      low_m: 0.30
+      nominal_m: 0.45
+      high_m: 0.60
+    air_temperature_damping:
+      low_c: 2.0
+      nominal_c: 2.75
+      high_c: 3.5
+    soil_temperature_damping:
+      low_c: 3.0
+      nominal_c: 4.0
+      high_c: 5.0
+    sensor_noise_multiplier:
+      low: 0.75
+      nominal: 1.00
+      high: 1.25

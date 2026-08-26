@@ -1,0 +1,72 @@
+{
+    "dataset_name": "Dual-Zone Agrivoltaic Field Sensor Dataset",
+    "dataset_version": "field_2026_v1",
+    "publication_status": "FROZEN_LOCKED",
+    "target_crop": "Cowpea (Vigna unguiculata)",
+    "location": {
+        "site": "Research Farm, Block B",
+        "coordinates": "11.0168 N, 76.9558 E",
+        "zone_A_description": "Open-field control (Full Sun)",
+        "zone_B_description": "Agrivoltaic PV-shaded canopy (38.9% shading)"
+    },
+    "campaign_timeline": {
+        "start_date": "2026-07-22",
+        "end_date": "2026-08-22",
+        "duration_days": 32,
+        "held_out_validation_window": "Days 17 to 31 (2026-08-08 to 2026-08-22)"
+    },
+    "sampling": {
+        "native_interval_seconds": 300,
+        "analytical_interval_seconds": 300,
+        "resampling_method": "left_closed_5min_mean"
+    },
+    "record_counts": {
+        "expected_native_records_per_zone": 9216,
+        "audited_native_records_total": 18432,
+        "qc_valid_native_records_total": 18432,
+        "analytical_5min_records_per_zone": 9216,
+        "analytical_5min_records_total": 18432
+    },
+    "transducers": [
+        {
+            "sensor": "ESP32-S3",
+            "role": "Microcontroller Node & SD Logging"
+        },
+        {
+            "sensor": "BME280",
+            "parameters": [
+                "air_temperature_c",
+                "relative_humidity_pct",
+                "pressure_hpa"
+            ]
+        },
+        {
+            "sensor": "BH1750 (Dual)",
+            "parameters": [
+                "light_up_lux",
+                "light_down_lux"
+            ],
+            "conversion": "Rs = lux * 0.0079 W/m2"
+        },
+        {
+            "sensor": "DS18B20",
+            "parameters": [
+                "soil_temperature_c"
+            ]
+        },
+        {
+            "sensor": "DS3231",
+            "parameters": [
+                "real_time_clock_timestamp"
+            ]
+        },
+        {
+            "sensor": "Capacitive VWC",
+            "parameters": [
+                "soil_vwc_mean",
+                "soil_adc_1",
+                "soil_adc_2"
+            ]
+        }
+    ]
+}

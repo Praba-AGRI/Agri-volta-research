@@ -1,0 +1,178 @@
+dataset:
+  target:
+    variable: "theta_v"
+    horizon_steps: 288
+    horizon_hours: 24
+    target_definition: "theta_v[t+288]"
+
+  input_window:
+    steps: 288
+    hours: 24
+
+  feature_policy:
+    future_information_allowed: false
+    finalized_daily_values_allowed: false
+    ET0_as_input: false
+
+  features:
+    direct_sensor:
+      - "T"
+      - "RH"
+      - "P"
+      - "Tsoil"
+      - "theta_v"
+      - "lux_up"
+      - "lux_down"
+
+
+
+    derived:
+      - "Rs"
+      - "solar_zenith_deg"
+      - "solar_azimuth_deg"
+      - "shade_fraction"
+      - "full_shade_flag"
+      - "VPD"
+      - "GDD_so_far_today"
+      - "cumulative_GDD"
+
+  total_features: 25
+
+cross_validation:
+  method: "rolling_origin_purged"
+  folds: 5
+  shuffle: false
+
+  temporal_purge:
+    enabled: true
+    gap_steps: 288
+    gap_hours: 24
+
+  split_unit: "shared_timestamp"
+
+  zone_alignment:
+    same_timestamp_same_fold: true
+
+  scaling:
+    fit_only_on_training_fold: true
+    separate_scaler_per_fold: true
+
+  hyperparameter_tuning:
+    nested_within_training_data: true
+
+  output:
+    report_per_fold: true
+    summary: "mean_plus_minus_sd"
+    confidence_interval: true
+
+models:
+  persistence:
+    equation: "theta_hat[t+288] = theta[t]"
+    required: true
+
+  random_forest:
+    enabled: true
+    n_estimators: 100
+    max_depth:
+      tuning: "cross_validated"
+    random_state:
+      derived_from_season_seed: true
+    input_representation:
+      method: "flatten_sequence"
+    expected_input_dimensions:
+      timesteps: 288
+      features: 25
+      flattened_features: 7200
+
+  bilstm:
+    enabled: true
+    input_shape:
+      timesteps: 288
+      features: 25
+    architecture:
+      layer_1:
+        type: "Bidirectional_LSTM"
+        units: 64
+        return_sequences: true
+        dropout: 0.20
+      layer_2:
+        type: "Bidirectional_LSTM"
+        units: 64
+        return_sequences: false
+        dropout: 0.20
+      dense:
+        units: 32
+        activation: "relu"
+      output:
+        units: 1
+        activation: "linear"
+    optimizer:
+      type: "Adam"
+      learning_rate: 0.001
+    loss: "MSE"
+    training:
+      early_stopping:
+        enabled: true
+        patience: 10
+        restore_best_weights: true
+      batch_size: 64
+      max_epochs: 150
+    leakage_control:
+      bidirectional_confined_to_input_window: true
+      future_target_visible_to_model: false
+
+uncertainty:
+  method: "MC_Dropout"
+  stochastic_forward_passes: 100
+  inference:
+    dropout_active: true
+  outputs:
+    predictive_mean: true
+    predictive_std: true
+    lower_confidence_bound: true
+  safety_bound:
+    notation: "LCB"
+    equation: "mu - z*sigma"
+    z_value: 1.645
+
+shap:
+  enabled: true
+  model_target: "trained_BiLSTM"
+  preferred_method:
+    primary: "DeepExplainer"
+    fallback: "KernelExplainer"
+  background_samples: 100
+  evaluation_samples_per_fold: 200
+  aggregation:
+    temporal_absolute_shap: true
+    driver_groups:
+      historical_soil_moisture:
+        - "theta_v"
+      temperature:
+        - "T"
+      humidity_vpd:
+        - "RH"
+        - "VPD"
+      radiation:
+        - "Rs"
+        - "lux_up"
+        - "lux_down"
+      soil_temperature:
+        - "Tsoil"
+      thermal_time:
+        - "GDD_so_far_today"
+        - "cumulative_GDD"
+      solar_geometry:
+        - "solar_zenith_deg"
+        - "solar_azimuth_deg"
+      shading:
+        - "shade_fraction"
+        - "full_shade_flag"
+
+      pressure:
+        - "P"
+  comparisons:
+    - "Zone_A_vs_Zone_B"
+    - "shaded_vs_direct_beam"
+
+

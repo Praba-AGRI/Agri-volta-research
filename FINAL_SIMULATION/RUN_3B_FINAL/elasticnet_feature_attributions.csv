@@ -1,0 +1,14 @@
+feature,std_coef
+fc_P,-3.3264256
+curr_theta,-1.4900774
+hist_T,1.1091497
+fc_u,-0.74204135
+hist_P,0.55275196
+fc_RH,-0.31518027
+fc_Rs,0.25442687
+hist_Tsoil,-0.22454832
+hist_Rs,-0.1357097
+hist_RH,0.11978214
+hist_VPD,-0.0
+fc_T,0.0
+fc_VPD,0.0

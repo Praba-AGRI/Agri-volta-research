@@ -1,0 +1,63 @@
+crop:
+  species: "Vigna unguiculata"
+  common_name: "Cowpea"
+
+  thermal_time:
+    base_temperature_c: 10.0
+    upper_temperature_c: 35.0
+    daily_gdd_equation: >
+      max(min(Tmean, T_upper) - T_base, 0)
+    cumulative_gdd: true
+
+  phenology:
+    stages:
+      - "emergence"
+      - "vegetative"
+      - "flowering"
+      - "podding"
+      - "physiological_maturity"
+    zone_specific_thermal_delay:
+      enabled: true
+
+  dynamic_kc:
+    method: "piecewise_linear"
+    initial:
+      upper_gdd: 550.0
+      kc: 0.40
+    mid:
+      lower_gdd: 550.0
+      upper_gdd: 900.0
+      kc: 1.15
+    late:
+      lower_gdd: 900.0
+      kc: 0.55
+    smooth_transition: true
+
+crop_growth:
+  biomass_model:
+    method: "radiation_use_efficiency"
+    equation:
+      biomass_increment: "RUE * APAR * Ks"
+    canopy_factor: true
+    dynamic_canopy: true
+
+  water_stress:
+    enabled: true
+    stress_factor_range:
+      minimum: 0.0
+      maximum: 1.0
+    stronger_reproductive_penalty: true
+
+  yield:
+    model: "biomass_times_harvest_index"
+    harvest_index:
+      nominal: 0.35
+      minimum: 0.25
+      maximum: 0.45
+
+  outputs:
+    - "daily_biomass_g_plant"
+    - "final_biomass_g_plant"
+    - "pod_yield_g_plant"
+    - "stress_days"
+    - "phenology_dates"

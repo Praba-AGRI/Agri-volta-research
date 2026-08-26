@@ -1,0 +1,16 @@
+variable_name,dataset_level,data_type,unit,description,valid_range
+timestamp,raw_5min / analytical_5min,datetime,ISO8601,Observation timestamp (UTC/Local),2026-07-22 to 2026-08-22
+air_temp_c,raw / qc / analytical,float,degC,Air temperature measured by BME280 sensor,10.0 to 45.0
+humidity_pct,raw / qc / analytical,float,%,Relative humidity measured by BME280 sensor,10.0 to 100.0
+pressure_hpa,raw / qc / analytical,float,hPa,Barometric pressure measured by BME280 sensor,900.0 to 1050.0
+soil_temp_c,raw / qc / analytical,float,degC,Soil temperature at 10cm depth measured by DS18B20,10.0 to 45.0
+soil_vwc_mean,analytical_5min,float,m3/m3,Calibrated volumetric soil water content (2-channel mean),0.05 to 0.45
+light_up_lux,raw / qc / analytical,float,lux,Incident solar illuminance measured by upward BH1750,0 to 120000
+light_down_lux,raw / qc / analytical,float,lux,Reflected canopy illuminance measured by downward BH1750,0 to 30000
+vpd_kpa,analytical_5min,float,kPa,Vapor pressure deficit derived from Tair and RH,0.0 to 4.5
+rs_down_wm2,analytical_5min,float,W/m2,Shortwave solar irradiance estimated from lux (lux * 0.0079),0.0 to 1200.0
+bme_ok,raw_5min / qc_5min,int/bool,flag,"BME280 hardware self-test diagnostic flag (1=OK, 0=FAIL)",0 or 1
+bh1_ok,raw_5min / qc_5min,int/bool,flag,"BH1750 hardware self-test diagnostic flag (1=OK, 0=FAIL)",0 or 1
+ds18_ok,raw_5min / qc_5min,int/bool,flag,"DS18B20 hardware self-test diagnostic flag (1=OK, 0=FAIL)",0 or 1
+rtc_ok,raw_5min / qc_5min,int/bool,flag,"DS3231 RTC hardware self-test diagnostic flag (1=OK, 0=FAIL)",0 or 1
+zone,all,string,category,"Experimental zone identifier (Zone A=Control, Zone B=Agrivoltaic)",A or B

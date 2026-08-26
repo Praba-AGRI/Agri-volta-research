@@ -1,0 +1,4 @@
+Mean Delta Y: +0.9425%
+Median Delta Y: +0.3919%
+5th Percentile: +0.0000%
+95th Percentile: +3.2063%

@@ -1,0 +1,17 @@
+{
+  "zone_A": {
+    "zone": "A",
+    "analytical_rows": 9216,
+    "parquet_output": "c:\\Users\\Prabakaran\\Desktop\\Agrivoltaics simulation\\data\\field\\analytical_5min\\zone_A\\field_zone_A_5min.parquet",
+    "start_timestamp": "2026-07-22 00:00:00",
+    "end_timestamp": "2026-08-22 23:55:00"
+  },
+  "zone_B": {
+    "zone": "B",
+    "analytical_rows": 9216,
+    "parquet_output": "c:\\Users\\Prabakaran\\Desktop\\Agrivoltaics simulation\\data\\field\\analytical_5min\\zone_B\\field_zone_B_5min.parquet",
+    "start_timestamp": "2026-07-22 00:00:00",
+    "end_timestamp": "2026-08-22 23:55:00"
+  },
+  "total_analytical_rows": 18432
+}

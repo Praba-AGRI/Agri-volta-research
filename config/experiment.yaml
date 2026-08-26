@@ -1,0 +1,86 @@
+project:
+  name: "Dual-Zone Tropical Agrivoltaic AI Irrigation Simulation"
+  short_name: "AVSIM"
+  version: "1.0.0"
+  status: "IN_SILICO"
+  description: >
+    Stochastic digital twin of a 70-day dual-zone tropical
+    agrivoltaic experiment for 24-hour soil-moisture forecasting
+    and irrigation-policy evaluation.
+
+  scientific_scope:
+    climate_context: "Tropical / monsoon-influenced"
+    crop: "Vigna unguiculata"
+    crop_common_name: "Cowpea"
+    location: "Coimbatore, Tamil Nadu, India"
+    simulation_only: true
+
+  reproducibility:
+    master_seed: 20260814
+    deterministic_mode: true
+    float_precision: "float32"
+
+experiment:
+  location:
+    latitude_deg: 11.016
+    longitude_deg: 76.971
+    timezone: "Asia/Kolkata"
+    elevation_m: null
+
+  duration:
+    days: 70
+    weeks: 10
+
+  temporal_resolution:
+    timestep_minutes: 5
+    timesteps_per_day: 288
+    timesteps_per_season: 20160
+
+  zones:
+    zone_a:
+      id: "A"
+      name: "Open-Field Control"
+      treatment: "open_field"
+      panel_shading: false
+
+    zone_b:
+      id: "B"
+      name: "Agrivoltaic Shaded Microclimate"
+      treatment: "agrivoltaic"
+      panel_shading: true
+
+  paired_experiment:
+    common_atmosphere: true
+    same_weather_realization_across_zones: true
+    same_initial_soil_state_with_zone_specific_calibration: true
+    same_crop_genotype: true
+    same_management_except_irrigation_policy: true
+
+monte_carlo:
+  primary_seasons: 50
+  robustness_seasons: 100
+  season_seed_rule: "master_seed + season_id"
+
+  independent_stochastic_components:
+    weather: true
+    cloud_events: true
+    rainfall_events: true
+    soil_parameter_variation: true
+    crop_parameter_variation: true
+    initial_moisture_variation: true
+    sensor_noise: true
+    sensor_drift: true
+    packet_loss: true
+    rtc_drift: true
+    irrigation_application_noise: true
+
+  common_across_policies_within_season:
+    weather_realization: true
+    soil_parameters: true
+    crop_parameters: true
+    initial_conditions: true
+    sensor_realization_for_controller_inputs: true
+
+  counterfactual_policy_runs:
+    enabled: true
+    policies_per_zone: 3

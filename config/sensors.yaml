@@ -1,0 +1,94 @@
+sensors:
+  sampling_interval_minutes: 5
+
+  bme280:
+    variables:
+      temperature:
+        noise_distribution: "gaussian"
+        sd_c: 0.5
+      relative_humidity:
+        noise_distribution: "gaussian"
+        sd_percent: 1.5
+      pressure:
+        noise_distribution: "gaussian"
+        sd_hpa: 1.0
+
+  ds18b20:
+    soil_temperature:
+      noise_distribution: "gaussian"
+      sd_c: 0.5
+
+  capacitive_soil_moisture:
+    calibration:
+      type: "zone_specific_three_point_gravimetric"
+    drift:
+      weekly_relative_drift_percent:
+        minimum: -0.05
+        maximum: 0.05
+    nonlinear_calibration: true
+    hysteresis:
+      enabled: true
+
+  bh1750:
+    channels:
+      - "up"
+      - "down"
+    conversion:
+      method: "spectral_response"
+
+
+
+sensor_error:
+  model:
+    equation: "observed = true + bias + noise"
+
+  slow_bias:
+    enabled: true
+    process: "AR1"
+    rho:
+      temperature: 0.995
+      humidity: 0.995
+      pressure: 0.995
+      soil_temperature: 0.998
+      soil_moisture: 0.999
+
+  white_noise:
+    enabled: true
+
+  outliers:
+    enabled: true
+    probability_per_timestep: 0.0002
+
+missing_data:
+  enabled: true
+  packet_drop:
+    model: "clustered_burst"
+    per_timestep_probability: 0.0005
+    duration_minutes:
+      minimum: 5
+      maximum: 120
+
+  preprocessing_rules:
+    gaps_less_than_30_minutes:
+      interpolate: true
+      method: "linear"
+    gaps_greater_than_30_minutes:
+      interpolate: false
+      exclude_from_training: true
+      training_mask: 0
+
+rtc:
+  device: "DS3231"
+  nominal_drift_ppm: 2.0
+  independent_zone_clocks: true
+
+  synchronization:
+    initial_utc_sync: true
+    weekly_resynchronization: true
+
+  timestamp_alignment:
+    retain_true_timestamp: true
+    retain_sensor_timestamp: true
+
+  output:
+    timestamp_offset_ms: true

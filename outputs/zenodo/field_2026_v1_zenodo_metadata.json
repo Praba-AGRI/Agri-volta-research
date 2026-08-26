@@ -1,0 +1,35 @@
+{
+    "dataset_name": "Dual-Zone Agrivoltaic Field Sensor Dataset: Open-Field and PV-Shaded Microclimate Telemetry",
+    "dataset_version": "field_2026_v1",
+    "archive_zip": "c:\\Users\\Prabakaran\\Desktop\\Agrivoltaics simulation\\outputs\\zenodo\\field_2026_v1.zip",
+    "zip_size_mb": 1.48,
+    "zip_sha256": "e5f115ae233d8013a563d20904a9b64a4abb5378dc5c09ac5eb8079696b56abd",
+    "files_count": 75,
+    "zenodo_metadata_fields": {
+        "title": "Dual-Zone Agrivoltaic Field Sensor Dataset: Open-Field and PV-Shaded Microclimate Telemetry",
+        "upload_type": "dataset",
+        "publication_date": "2026-08-26",
+        "creators": [
+            {
+                "name": "Prabakaran, S.",
+                "affiliation": "Research Scholar"
+            }
+        ],
+        "description": "Real-world dual-zone agrivoltaic microclimate telemetry collected from July 22 to August 22, 2026 for Cowpea (Vigna unguiculata). Includes 32 daily SD CSVs per zone, 5-min analytical Parquet datasets, transformation scripts, and SHA-256 integrity hashes.",
+        "keywords": [
+            "Agrivoltaics",
+            "Microclimate",
+            "Precision Agriculture",
+            "Soil Moisture",
+            "Evapotranspiration",
+            "FAO-56",
+            "Cowpea",
+            "IoT Sensors",
+            "Field Validation",
+            "Machine Learning",
+            "Domain Adaptation"
+        ],
+        "access_right": "open",
+        "license": "CC-BY-4.0"
+    }
+}

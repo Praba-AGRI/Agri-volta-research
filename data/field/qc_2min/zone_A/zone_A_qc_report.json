@@ -1,0 +1,10 @@
+{
+  "zone": "A",
+  "raw_rows": 9216,
+  "valid_rows": 9216,
+  "duplicates": 0,
+  "missing_records": 0,
+  "completeness_percent": 100.0,
+  "parquet_output": "c:\\Users\\Prabakaran\\Desktop\\Agrivoltaics simulation\\data\\field\\qc_2min\\zone_A\\zone_A_qc_2min.parquet",
+  "csv_output": "c:\\Users\\Prabakaran\\Desktop\\Agrivoltaics simulation\\data\\field\\qc_2min\\zone_A\\zone_A_qc_2min.csv"
+}

@@ -1,0 +1,10 @@
+sensor_id,model,parameter,unit,sampling_rate,bus_interface,accuracy,operating_range
+SENS_01,BME280,air_temperature,degC,5 min,I2C 0x76,+/- 0.5 degC,-40 to +85 degC
+SENS_02,BME280,relative_humidity,%,5 min,I2C 0x76,+/- 3.0 %,0 to 100 %
+SENS_03,BME280,barometric_pressure,hPa,5 min,I2C 0x76,+/- 1.0 hPa,300 to 1100 hPa
+SENS_04,BH1750_UP,incident_lux,lux,5 min,I2C 0x23,+/- 20 %,1 to 65535 lux
+SENS_05,BH1750_DN,reflected_lux,lux,5 min,I2C 0x5C,+/- 20 %,1 to 65535 lux
+SENS_06,DS18B20,soil_temperature,degC,5 min,OneWire Pin 4,+/- 0.5 degC,-55 to +125 degC
+SENS_07,DS3231,rtc_timestamp,ISO8601,5 min,I2C 0x68,+/- 2 ppm,Real-Time Clock
+SENS_08,CAP_VWC_1,soil_moisture_ch1,m3/m3,5 min,ADC GPIO 32,+/- 0.03 m3/m3,0.0 to 0.45 m3/m3
+SENS_09,CAP_VWC_2,soil_moisture_ch2,m3/m3,5 min,ADC GPIO 33,+/- 0.03 m3/m3,0.0 to 0.45 m3/m3

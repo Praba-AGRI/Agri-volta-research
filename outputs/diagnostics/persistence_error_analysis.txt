@@ -1,0 +1,67 @@
+=== PERSISTENCE ERROR ANALYSIS REPORT ===
+
+Total samples: 19585
+Overall Persistence Error (delta_theta_24h) Mean: -0.000062, Std: 0.009560
+
+--- Correlations with e_pers ---
+theta_current             : -0.362771
+Tsoil_mean_24h            : 0.172183
+T_mean_24h                : 0.167673
+Rain_24h                  : -0.146780
+VPD_24h                   : 0.136211
+theta_change_24h          : -0.126937
+Rs_24h                    : 0.110301
+theta_change_1h           : 0.108477
+RH_mean_24h               : -0.102521
+Rain_12h                  : -0.083449
+RH_current                : 0.059610
+GDD_daily                 : 0.058901
+Rain_6h                   : -0.046551
+Rs_1h                     : -0.044160
+shade_mean_24h            : -0.038924
+theta_change_6h           : 0.031843
+GDD_cumulative            : 0.021758
+theta_change_12h          : -0.020354
+T_current                 : -0.019699
+VPD_1h                    : -0.016588
+Tsoil_current             : 0.014801
+VPD_6h                    : 0.014559
+Rs_6h                     : -0.004582
+Rain_1h                   : 0.003516
+shade_current             : -0.001033
+
+--- 5-Fold Purged Rolling Origin CV (Predicting e_pers) ---
+Fold 1: R2 = -1.2640, RMSE = 0.00573
+Fold 2: R2 = -0.3653, RMSE = 0.00881
+Fold 3: R2 = -0.0598, RMSE = 0.01085
+Fold 4: R2 = 0.2300, RMSE = 0.01236
+Fold 5: R2 = -0.1681, RMSE = 0.01179
+Mean CV R2: -0.3254
+Mean CV RMSE: 0.00991
+
+--- Feature Importances ---
+theta_current             : 0.274478
+GDD_daily                 : 0.198431
+shade_mean_24h            : 0.133336
+theta_change_24h          : 0.111356
+GDD_cumulative            : 0.095640
+RH_mean_24h               : 0.052584
+Tsoil_mean_24h            : 0.028621
+Rs_24h                    : 0.025997
+VPD_6h                    : 0.017768
+VPD_24h                   : 0.011276
+T_mean_24h                : 0.009386
+Tsoil_current             : 0.006989
+Rain_24h                  : 0.005555
+theta_change_1h           : 0.005016
+theta_change_12h          : 0.004232
+Rain_6h                   : 0.003610
+theta_change_6h           : 0.003448
+Rs_6h                     : 0.003126
+Rain_12h                  : 0.002748
+VPD_1h                    : 0.002238
+Rs_1h                     : 0.001421
+Rain_1h                   : 0.000977
+shade_current             : 0.000692
+T_current                 : 0.000686
+RH_current                : 0.000389

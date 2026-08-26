@@ -1,0 +1,148 @@
+weather:
+  generation_method:
+    architecture: "regime_based_correlated_weather"
+    stochastic_regimes:
+      - "CLEAR"
+      - "PARTLY_CLOUDY"
+      - "OVERCAST"
+      - "RAIN"
+      - "HEAVY_RAIN"
+
+    regime_persistence: true
+    temporal_correlation: true
+
+  zone_a_reference_ranges:
+    air_temperature_c:
+      nominal_min: 22.0
+      nominal_max: 38.0
+      hard_min: 18.0
+      hard_max: 42.0
+
+    relative_humidity_percent:
+      nominal_min: 45.0
+      nominal_max: 92.0
+      hard_min: 20.0
+      hard_max: 100.0
+
+    pressure_hpa:
+      nominal_min: 995.0
+      nominal_max: 1012.0
+      hard_min: 980.0
+      hard_max: 1030.0
+
+    solar_radiation_wm2:
+      nominal_peak_min: 850.0
+      nominal_peak_max: 1050.0
+      hard_min: 0.0
+      hard_max: 1200.0
+
+    wind_speed_mps:
+      nominal_min: 0.8
+      nominal_max: 4.2
+      hard_min: 0.0
+      hard_max: 15.0
+
+    precipitation_mm_day:
+      nominal_min: 0.0
+      nominal_max: 45.0
+      hard_min: 0.0
+
+  coupling:
+    cloud_reduces_radiation: true
+    cloud_reduces_day_temperature: true
+    cloud_increases_relative_humidity: true
+    rain_reduces_temperature: true
+    rain_increases_relative_humidity: true
+    rain_can_increase_wind: true
+
+  daily_cycle:
+    temperature_diurnal: true
+    humidity_anti_phase_with_temperature: true
+    radiation_daylight_only: true
+    pressure_low_frequency_variation: true
+
+  rainfall:
+    event_based: true
+    clustered_events: true
+    inter_event_period_randomized: true
+
+    event_depth_distribution:
+      type: "lognormal"
+      mean_mm: 8.0
+      sd_mm: 9.0
+      max_event_mm: 45.0
+
+    event_duration_hours:
+      min: 0.5
+      max: 12.0
+
+  missing_weather_data:
+    enabled: true
+    probability_per_timestep: 0.0005
+    clustered_failures: true
+
+microclimate:
+  zone_b:
+    air_temperature:
+      enabled: true
+      daytime_cooling_c:
+        minimum: 2.0
+        maximum: 3.5
+      nighttime_buffer_c:
+        nominal: 0.5
+        minimum: 0.3
+        maximum: 0.8
+      controls:
+        - "shade_fraction"
+        - "Rs_direct"
+        - "wind_speed"
+        - "cloud_state"
+
+    relative_humidity:
+      enabled: true
+      increase_percent:
+        minimum: 5.0
+        maximum: 12.0
+      upper_bound_percent: 100.0
+
+    soil_temperature:
+      enabled: true
+      daytime_peak_reduction_c:
+        minimum: 3.0
+        maximum: 5.0
+      thermal_response:
+        lagged_model: true
+        time_constant_hours: 6.0
+
+    wind:
+      mode: "paper_conservative"
+      paper_conservative:
+        zone_b_equals_zone_a: true
+      physical_microclimate:
+        enabled_for_sensitivity_only: true
+        attenuation_factor:
+          minimum: 0.70
+          maximum: 1.00
+
+    vapor_pressure_deficit:
+      enabled: true
+
+rainfall_partition:
+  zone_a:
+    interception_fraction: 0.0
+
+  zone_b:
+    panel_interception:
+      enabled: true
+      nominal_fraction: 0.10
+      minimum_fraction: 0.00
+      maximum_fraction: 0.25
+    redistribution:
+      enabled: true
+      fraction_to_zone_b_root_zone: 0.90
+    edge_concentration:
+      enabled: true
+      use_for_central_zone: false
+
+  effective_precipitation:
+    capped_by_infiltration_capacity: true

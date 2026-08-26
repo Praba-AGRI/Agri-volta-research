@@ -1,0 +1,76 @@
+pv_geometry:
+  baseline_virtual_geometry:
+    panel:
+      tilt_deg: 15.0
+      azimuth_deg: 180.0
+      length_m: 2.0
+      width_m: 1.1
+
+    mounting:
+      lower_edge_height_m: 2.5
+      upper_edge_height_m: 3.05
+
+    array:
+      row_pitch_m: 6.0
+      rows: 4
+      columns: 8
+
+    sensor_positions:
+      zone_a:
+        relative_to_array: "outside_array"
+        distance_from_panel_edge_m: 5.0
+
+      zone_b:
+        relative_to_array: "central_under_array"
+        x_m: 3.0
+        y_m: 3.0
+
+  shading:
+    continuous_shade_fraction: true
+    output_range:
+      minimum: 0.0
+      maximum: 1.0
+    full_shade_threshold: 0.80
+    full_shade_flag_rule: >
+      full_shade_flag = 1 when shade_fraction >= 0.80,
+      otherwise 0.
+
+  radiation_components:
+    direct_beam: true
+    diffuse_sky: true
+    panel_transmission: true
+    panel_diffuse_transmission: true
+    ground_reflection: true
+
+radiation:
+  decomposition:
+    direct_diffuse: true
+
+  zone_a:
+    direct_transmission_fraction: 1.0
+    diffuse_transmission_fraction: 1.0
+
+  zone_b:
+    direct_beam:
+      attenuation_controlled_by_shade_fraction: true
+      panel_transmission:
+        nominal: 0.60
+        minimum: 0.55
+        maximum: 0.65
+
+    diffuse:
+      transmission:
+        nominal: 0.85
+        minimum: 0.75
+        maximum: 0.95
+
+  output_variables:
+    - "Rs_true_wm2"
+    - "Rs_direct_wm2"
+    - "Rs_diffuse_wm2"
+    - "shade_fraction"
+    - "full_shade_flag"
+
+  lux_conversion:
+    method: "spectral_response_based"
+    fixed_global_lux_per_wm2: false
