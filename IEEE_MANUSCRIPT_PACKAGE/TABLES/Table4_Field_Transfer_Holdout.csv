@@ -1,0 +1,4 @@
+Model Tier,Training Horizon,Held-Out Test Window,Forecast Origins,RMSE (mm),95% Daily Block-Bootstrap CI,MAE (mm),Bias (mm),R2
+Model A (Zero-Shot),Simulation Only,Days 17-31 (15 Days),4320,16.37,"[12.47, 20.62] mm",13.75,+7.01 mm,-0.2867
+Model B (7-Day FT),"Days 1-7 (2,016 steps)",Days 17-31 (Common Test),4320,12.69,"[8.30, 16.39] mm",9.83,+8.09 mm,0.2271
+Model C (16-Day FT),"Days 1-16 (4,608 steps)",Days 17-31 (Common Test),4320,7.33,"[5.66, 8.70] mm",5.82,-4.38 mm,0.7421

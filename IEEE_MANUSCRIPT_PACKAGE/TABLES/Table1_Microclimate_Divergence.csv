@@ -1,0 +1,6 @@
+Parameter,Zone A,Zone B,Shift
+Lux-Derived Shortwave Reduction,0.0%,38.9%,-38.9%
+Peak Daytime VPD Shift,1.240 kPa,1.127 kPa,-0.113 kPa
+Peak Daytime Air Temperature,31.25 °C,30.82 °C,-0.43 °C
+Peak Daytime Relative Humidity,62.40%,63.57%,+1.17%
+Peak Daytime Soil Temperature,28.90 °C,28.42 °C,-0.48 °C
