@@ -1,7 +1,0 @@
-Model Architecture,RMSE (mm),FNR,ICE90,Status
-ElasticNet Linear,8.92,0.00%,0.0811,FROZEN WINNER
-Quantile Random Forest,10.91,2.29%,0.1,ELIGIBLE
-HistGradientBoosting,11.42,7.17%,0.0985,ELIGIBLE
-Multi-Output BiLSTM,12.03,0.00%,0.3082,CALIBRATION FAIL
-Physics-Only Forecast,31.68,20.74%,0.221,INELIGIBLE
-Persistence Baseline,34.36,32.76%,0.285,INELIGIBLE
