@@ -1,0 +1,35 @@
+# Large files and videos
+*.mp4
+*.mkv
+*.avi
+*.docx
+proof/
+
+# Python Virtual Environments, Dependencies & Cache
+requirements.txt
+pyproject.toml
+*.py
+backend/
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+
+# Local data & heavy packages
+data/
+experiments/
+FINAL_SIMULATION/
+IEEE_MANUSCRIPT_PACKAGE/
+outputs/
+validation/
+firmware/
+irrigation/
+simulation/
+tests/
+scripts/
+
+# Dependencies
+node_modules/
+frontend/node_modules/
+frontend/dist/
