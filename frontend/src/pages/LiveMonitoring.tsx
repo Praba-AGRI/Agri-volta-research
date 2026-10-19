@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
-import { Activity, ShieldCheck, CheckCircle2, Calendar, Cpu } from 'lucide-react';
+import { ShieldCheck, Cpu, Clock as ClockIcon, Radio } from 'lucide-react';
 import ReactECharts from 'echarts-for-react';
-import axios from 'axios';
+import { api } from '../services/api';
 import { useStore } from '../store/useStore';
 
 interface LiveData {
@@ -57,11 +57,11 @@ export default function LiveMonitoring() {
   const [zoneB, setZoneB] = useState<LiveData | null>(null);
 
   useEffect(() => {
-    const fetchInitialData = async () => {
+    const fetchData = async () => {
       try {
         const [resA, resB] = await Promise.all([
-          axios.get(`http://localhost:8000/api/live/zone/A`, { params: { mode: datasetMode } }),
-          axios.get(`http://localhost:8000/api/live/zone/B`, { params: { mode: datasetMode } })
+          api.get('/api/live/zone/A', { params: { mode: datasetMode } }),
+          api.get('/api/live/zone/B', { params: { mode: datasetMode } })
         ]);
         
         if (resA.data) {
@@ -75,7 +75,7 @@ export default function LiveMonitoring() {
       }
     };
     
-    fetchInitialData();
+    fetchData();
   }, [datasetMode]);
 
   const isField = datasetMode === 'FIELD';
@@ -146,18 +146,21 @@ export default function LiveMonitoring() {
 
   const renderZoneBlock = (title: string, data: LiveData | null, gaugeColor: string) => {
      const quality = data?.quality || (isField ? 'VALID' : 'PHYSICS_SIMULATED');
+     const timestampDisplay = data?.timestamp || '2026-10-02 23:55:00';
+
      return (
        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4">
           <div className="flex justify-between items-center border-b border-slate-100 pb-3">
              <div className="flex items-center space-x-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
                 <h2 className="text-base font-bold text-slate-800 uppercase tracking-tight">{title}</h2>
                 <span className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase ${QUALITY_BG[quality] || 'bg-slate-100'} ${QUALITY_COLORS[quality] || 'text-slate-600'}`}>
-                   {isField ? `STATUS: ${quality}` : `ENGINE: SIMULATED`}
+                   {isField ? `STATUS: COMPLETED` : `ENGINE: SIMULATED`}
                 </span>
              </div>
-             <span className="text-xs text-slate-500 font-mono flex items-center">
-                <ClockIcon className="w-3.5 h-3.5 mr-1 text-slate-400" />
-                {isField ? '2026-08-22 23:55:00' : 'CLOSED-LOOP MODEL ACTIVE'}
+             <span className="text-xs text-slate-600 font-mono font-bold flex items-center bg-slate-50 px-2.5 py-1 rounded border border-slate-200">
+                <ClockIcon className="w-3.5 h-3.5 mr-1.5 text-teal-600" />
+                {timestampDisplay}
              </span>
           </div>
 
@@ -198,112 +201,92 @@ export default function LiveMonitoring() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
-      {/* Header Banner */}
+    <div className="space-y-6">
+      {/* Top Banner */}
       <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2">
-            <Activity className={`w-5 h-5 ${isField ? 'text-teal-700' : 'text-amber-700'}`} />
-            <h1 className="text-xl font-bold text-slate-800">
-              {isField ? 'Field Telemetry Gauges & Sensor Monitoring' : 'Digital Twin Physics Simulation Engine'}
-            </h1>
+            <Radio className={`w-5 h-5 ${isField ? 'text-teal-700' : 'text-amber-700'}`} />
+            <h1 className="text-xl font-bold text-slate-800">Live Monitoring & Sensor Telemetry Archive</h1>
             <span className={`px-2.5 py-0.5 text-xs font-bold rounded-full border flex items-center ${
               isField ? 'bg-teal-100 text-teal-800 border-teal-200' : 'bg-amber-100 text-amber-800 border-amber-200'
             }`}>
               {isField ? <ShieldCheck className="w-3.5 h-3.5 mr-1" /> : <Cpu className="w-3.5 h-3.5 mr-1" />}
-              {isField ? 'field_2026_v1 (LOCKED)' : 'simulation_v1 (DIGITAL TWIN)'}
+              {isField ? 'COMPLETED CAMPAIGN AUDIT' : 'DIGITAL TWIN SIMULATOR'}
             </span>
           </div>
-          <p className="text-xs text-slate-500 mt-1 flex items-center">
-            <Calendar className="w-3.5 h-3.5 mr-1 text-slate-400" />
-            {isField
-              ? 'Audited real-world sensor observations (22 July 2026 – 22 August 2026 | Day 32 Finished)'
-              : 'Physics-based numerical microclimate engine simulation outputs'}
+          <p className="text-xs text-slate-500 mt-1">
+            Final audited microclimate transducer readings for 2-day field campaign (01 Oct 2026 – 02 Oct 2026).
           </p>
         </div>
 
-        <div className={`flex items-center border px-3.5 py-2 rounded-xl text-xs font-bold space-x-2 ${
+        <div className={`flex items-center border px-3 py-1.5 rounded-lg text-xs font-bold space-x-2 ${
           isField ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200'
         }`}>
-          <CheckCircle2 className={`w-4.5 h-4.5 ${isField ? 'text-emerald-600' : 'text-amber-600'}`} />
-          <span>{isField ? 'EXPERIMENT STATUS: FINISHED' : 'SIMULATION MODE: RUNNING'}</span>
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+          <span>DATE: 01–02 OCT 2026 (CAMPAIGN COMPLETED)</span>
         </div>
       </div>
-      
-      {renderZoneBlock("ZONE A — OPEN FIELD (CONTROL)", zoneA, "#f59e0b")}
-      {renderZoneBlock("ZONE B — AGRIVOLTAIC (PV CANOPY)", zoneB, "#3b82f6")}
-      
-      {/* Difference Table */}
-      <div className="bg-slate-900 rounded-xl shadow-lg border border-slate-800 overflow-hidden text-slate-300">
-         <div className="p-4 border-b border-slate-800 bg-slate-950/50 flex justify-between items-center">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center">
-               <ShieldCheck className="w-4 h-4 mr-1.5" />
-               {isField ? 'Final Agrivoltaic Microclimate Divergence (B − A)' : 'Simulated Digital Twin Microclimate Divergence (B − A)'}
-            </h3>
-            <span className="text-[10px] text-slate-400 font-mono font-semibold">
-              Source: {isField ? 'SD_ARCHIVE (18,432 Observations)' : 'SIMULATION_ENGINE (Physics Model)'}
-            </span>
-         </div>
-         <div className="p-0 overflow-x-auto">
-            <table className="w-full text-xs text-left">
-               <thead className="bg-slate-800/50 text-[10px] uppercase text-slate-400">
-                  <tr>
-                     <th className="px-6 py-3 font-semibold">Parameter</th>
-                     <th className="px-6 py-3 font-semibold text-right">Zone A (Control)</th>
-                     <th className="px-6 py-3 font-semibold text-right">Zone B (Agrivoltaic)</th>
-                     <th className="px-6 py-3 font-semibold text-right text-emerald-300">Delta (B − A)</th>
-                  </tr>
-               </thead>
-               <tbody className="divide-y divide-slate-800/50 font-mono">
-                  <tr className="hover:bg-slate-800/30">
-                     <td className="px-6 py-3 font-sans font-medium text-white">Shortwave Solar Irradiance (Rs)</td>
-                     <td className="px-6 py-3 text-right">{zoneA?.rs_incoming?.toFixed(2) ?? '---'}</td>
-                     <td className="px-6 py-3 text-right">{zoneB?.rs_incoming?.toFixed(2) ?? '---'}</td>
-                     <td className="px-6 py-3 text-right text-emerald-400 font-bold">{diffValues?.rs_incoming} <span className="text-[10px] font-sans text-slate-400">W/m²</span></td>
-                  </tr>
-                  <tr className="hover:bg-slate-800/30">
-                     <td className="px-6 py-3 font-sans font-medium text-white">Air Temperature</td>
-                     <td className="px-6 py-3 text-right">{zoneA?.air_temperature?.toFixed(1) ?? '---'}</td>
-                     <td className="px-6 py-3 text-right">{zoneB?.air_temperature?.toFixed(1) ?? '---'}</td>
-                     <td className="px-6 py-3 text-right text-emerald-400 font-bold">{diffValues?.temp} <span className="text-[10px] font-sans text-slate-400">°C</span></td>
-                  </tr>
-                  <tr className="hover:bg-slate-800/30">
-                     <td className="px-6 py-3 font-sans font-medium text-white">Vapor Pressure Deficit (VPD)</td>
-                     <td className="px-6 py-3 text-right">{zoneA?.vpd?.toFixed(3) ?? '---'}</td>
-                     <td className="px-6 py-3 text-right">{zoneB?.vpd?.toFixed(3) ?? '---'}</td>
-                     <td className="px-6 py-3 text-right text-emerald-400 font-bold">{diffValues?.vpd} <span className="text-[10px] font-sans text-slate-400">kPa</span></td>
-                  </tr>
-                  <tr className="hover:bg-slate-800/30">
-                     <td className="px-6 py-3 font-sans font-medium text-white">Soil Moisture (θv)</td>
-                     <td className="px-6 py-3 text-right">{zoneA?.soil_moisture?.toFixed(3) ?? '---'}</td>
-                     <td className="px-6 py-3 text-right">{zoneB?.soil_moisture?.toFixed(3) ?? '---'}</td>
-                     <td className="px-6 py-3 text-right text-emerald-400 font-bold">{diffValues?.soil} <span className="text-[10px] font-sans text-slate-400">m³/m³</span></td>
-                  </tr>
-                  <tr className="hover:bg-slate-800/30">
-                     <td className="px-6 py-3 font-sans font-medium text-white">Soil Temperature</td>
-                     <td className="px-6 py-3 text-right">{zoneA?.soil_temperature?.toFixed(1) ?? '---'}</td>
-                     <td className="px-6 py-3 text-right">{zoneB?.soil_temperature?.toFixed(1) ?? '---'}</td>
-                     <td className="px-6 py-3 text-right text-emerald-400 font-bold">{diffValues?.soilT} <span className="text-[10px] font-sans text-slate-400">°C</span></td>
-                  </tr>
-                  <tr className="hover:bg-slate-800/30">
-                     <td className="px-6 py-3 font-sans font-medium text-white">Relative Humidity</td>
-                     <td className="px-6 py-3 text-right">{zoneA?.relative_humidity?.toFixed(1) ?? '---'}</td>
-                     <td className="px-6 py-3 text-right">{zoneB?.relative_humidity?.toFixed(1) ?? '---'}</td>
-                     <td className="px-6 py-3 text-right text-emerald-400 font-bold">{diffValues?.rh} <span className="text-[10px] font-sans text-slate-400">%</span></td>
-                  </tr>
-               </tbody>
-            </table>
-         </div>
-      </div>
-      
-    </div>
-  );
-}
 
-function ClockIcon(props: any) {
-  return (
-    <svg {...props} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
+      {/* Render Zone Blocks */}
+      {renderZoneBlock("ZONE A — OPEN FIELD (CONTROL)", zoneA, "#3b82f6")}
+      {renderZoneBlock("ZONE B — AGRIVOLTAIC (PV CANOPY)", zoneB, "#10b981")}
+
+      {/* Microclimate Divergence Table */}
+      {diffValues && (
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4">
+          <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+             <h2 className="text-base font-bold text-slate-800">
+                Canopy Divergence Summary (Zone B - Zone A)
+             </h2>
+             <span className="text-xs font-mono text-teal-700 font-bold bg-teal-50 px-2.5 py-1 rounded border border-teal-200">
+                Campaign Period: 01 Oct 2026 – 02 Oct 2026
+             </span>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 font-mono text-xs">
+             <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                <div className="text-[10px] text-slate-400 font-bold uppercase">Δ Air Temp</div>
+                <div className="text-sm font-bold text-teal-700">{diffValues.temp} °C</div>
+             </div>
+
+             <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                <div className="text-[10px] text-slate-400 font-bold uppercase">Δ Humidity</div>
+                <div className="text-sm font-bold text-blue-700">{diffValues.rh} %</div>
+             </div>
+
+             <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                <div className="text-[10px] text-slate-400 font-bold uppercase">Δ Soil Moisture</div>
+                <div className="text-sm font-bold text-emerald-700">{diffValues.soil} m³/m³</div>
+             </div>
+
+             <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                <div className="text-[10px] text-slate-400 font-bold uppercase">Δ VPD</div>
+                <div className="text-sm font-bold text-purple-700">{diffValues.vpd} kPa</div>
+             </div>
+
+             <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                <div className="text-[10px] text-slate-400 font-bold uppercase">Δ Soil Temp</div>
+                <div className="text-sm font-bold text-amber-700">{diffValues.soilT} °C</div>
+             </div>
+
+             <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                <div className="text-[10px] text-slate-400 font-bold uppercase">Δ Irradiance</div>
+                <div className="text-sm font-bold text-yellow-700">{diffValues.rs_incoming} W/m²</div>
+             </div>
+
+             <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                <div className="text-[10px] text-slate-400 font-bold uppercase">Δ Reflected Rs</div>
+                <div className="text-sm font-bold text-slate-700">{diffValues.rs_reflected} W/m²</div>
+             </div>
+
+             <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                <div className="text-[10px] text-slate-400 font-bold uppercase">Δ Albedo</div>
+                <div className="text-sm font-bold text-slate-700">{diffValues.albedo}</div>
+             </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

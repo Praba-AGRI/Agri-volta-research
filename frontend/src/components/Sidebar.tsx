@@ -10,7 +10,6 @@ import {
   Stethoscope, 
   Download,
   ClipboardList,
-  CheckCircle2,
   Lock,
   Cpu
 } from 'lucide-react';
@@ -81,7 +80,7 @@ export default function Sidebar() {
               isField ? 'bg-teal-500/20 text-teal-300 border border-teal-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
             }`}>
               {isField ? <Lock className="w-3 h-3 mr-1 text-teal-400" /> : <Cpu className="w-3 h-3 mr-1 text-amber-400" />}
-              {isField ? 'field_2026_v1' : 'simulation_v1'}
+              {isField ? 'field_2026_oct_v1' : 'simulation_v1'}
             </span>
           </div>
 
@@ -89,7 +88,7 @@ export default function Sidebar() {
             <div className="flex items-center justify-between">
               <span className="text-slate-400 font-sans">Run ID</span>
               <span className="text-white font-bold bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
-                {isField ? 'RUN 4' : 'SIM-01'}
+                {isField ? 'RUN 5' : 'SIM-01'}
               </span>
             </div>
 
@@ -98,15 +97,15 @@ export default function Sidebar() {
               <span className={`font-bold flex items-center ${
                 isField ? 'text-emerald-400' : 'text-amber-400'
               }`}>
-                <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
-                {isField ? 'FINISHED' : 'RUNNING'}
+                <span className="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
+                COMPLETED (OCT 1–2)
               </span>
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-slate-400 font-sans">Campaign</span>
+              <span className="text-slate-400 font-sans">Date</span>
               <span className="text-slate-300 font-semibold font-sans text-[11px]">
-                {isField ? '22 Jul – 22 Aug' : 'Closed Loop'}
+                01 Oct – 02 Oct 2026
               </span>
             </div>
           </div>

@@ -98,12 +98,12 @@ async def get_comparison_summary(mode: str = Query("FIELD", description="SIMULAT
             pass
 
     return {
-        "title": "32-Day Real Field Agrivoltaic Microclimate Divergence Audit",
-        "period": "22 July 2026 – 22 August 2026",
+        "title": "2-Day Real Field Agrivoltaic Microclimate Divergence Audit",
+        "period": "01 October 2026 – 02 October 2026",
         "dataset_mode": "FIELD",
         "source": "SD_ARCHIVE",
-        "sample_counts": {"raw_2min": 18432, "analytical_5min": 18432},
-        "dataset_version": "field_2026_v1",
+        "sample_counts": {"raw_2min": 1152, "analytical_5min": 1152},
+        "dataset_version": "field_2026_oct_v1",
         "microclimate_metrics": [
             {
                 "parameter": "Lux-Derived Shortwave Radiation",

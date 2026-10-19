@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { api } from '../services/api';
 import ReactECharts from 'echarts-for-react';
 import { Network, ShieldCheck, CheckCircle2, Cpu } from 'lucide-react';
 import { useStore } from '../store/useStore';
@@ -19,9 +19,9 @@ export default function Shap() {
       try {
         const predictionId = "latest";
         const [globalRes, localRes, temporalRes] = await Promise.all([
-          axios.get('http://localhost:8000/api/shap/global', { params: { mode: datasetMode } }),
-          axios.get(`http://localhost:8000/api/shap/local/${predictionId}`, { params: { mode: datasetMode } }),
-          axios.get(`http://localhost:8000/api/shap/temporal/${predictionId}`, { params: { mode: datasetMode } })
+          api.get('/api/shap/global', { params: { mode: datasetMode } }),
+          api.get(`/api/shap/local/${predictionId}`, { params: { mode: datasetMode } }),
+          api.get(`/api/shap/temporal/${predictionId}`, { params: { mode: datasetMode } })
         ]);
         
         setGlobalShap(globalRes.data);

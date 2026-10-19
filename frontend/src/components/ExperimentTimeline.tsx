@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Calendar, CheckCircle2, Lock } from 'lucide-react';
+import { api } from '../services/api';
+import { Calendar, Radio } from 'lucide-react';
 
 interface ExperimentConfig {
   experiment_id: string;
@@ -14,11 +14,11 @@ interface ExperimentConfig {
 
 export default function ExperimentTimeline() {
   const [config, setConfig] = useState<ExperimentConfig | null>(null);
-  
+
   useEffect(() => {
     const fetchConfig = async () => {
       try {
-        const res = await axios.get('http://localhost:8000/api/experiment/active');
+        const res = await api.get('/api/experiment/active');
         setConfig(res.data);
       } catch (err) {
         console.error('Failed to fetch experiment config', err);
@@ -47,9 +47,9 @@ export default function ExperimentTimeline() {
         
         <div className="flex items-center">
            <span className="text-xs uppercase font-bold tracking-wider text-slate-400 mr-2">Status:</span>
-           <span className="flex items-center text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded text-xs border border-emerald-200">
-              <CheckCircle2 className="w-3.5 h-3.5 mr-1 text-emerald-600" />
-              FINISHED (COMPLETED)
+           <span className="flex items-center text-emerald-700 font-bold bg-emerald-50 px-2.5 py-0.5 rounded text-xs border border-emerald-200">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span>
+              {config.status || 'COMPLETED (OCT 1–2, 2026)'}
            </span>
         </div>
       </div>
@@ -57,14 +57,13 @@ export default function ExperimentTimeline() {
       <div className="flex items-center">
         <div className="flex flex-col items-end">
           <span className="text-xs uppercase font-bold tracking-wider text-slate-400 mb-0.5 flex items-center">
-            <Lock className="w-3 h-3 mr-1 text-teal-600" /> Campaign Timeline
+            <Radio className="w-3 h-3 mr-1 text-teal-600" />
+            Completed Field Experiment Telemetry
           </span>
           <div className="flex items-center font-mono text-xs">
-            <span className="text-slate-600 font-semibold">Start: 07/22/2026</span>
-            <span className="text-slate-300 mx-2">→</span>
-            <span className="text-slate-600 font-semibold">End: 08/22/2026</span>
-            <span className="ml-2 font-bold text-teal-700 bg-teal-50 px-1.5 py-0.5 rounded border border-teal-200">
-              Day 32 / 32 (Finished)
+            <span className="text-slate-600 font-semibold">Campaign: 01/10/2026 – 02/10/2026</span>
+            <span className="ml-2 font-bold text-teal-700 bg-teal-50 px-1.5 py-0.5 rounded border border-teal-200 flex items-center">
+              01 Oct – 02 Oct 2026
             </span>
           </div>
         </div>

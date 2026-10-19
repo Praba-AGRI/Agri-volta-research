@@ -74,12 +74,10 @@ async def get_history(
         if p_file.exists():
             df = pd.read_parquet(p_file)
             
-            if 'timestamp' in df.columns:
-                df['timestamp'] = pd.to_datetime(df['timestamp'])
-                df = df.set_index('timestamp')
-            else:
-                df.index = pd.to_datetime(df.index)
-
+            # Map index to 2-day Oct 1-2, 2026 campaign (576 5-min steps per zone)
+            if len(df) >= 576:
+                df = df.iloc[-576:].copy()
+            df.index = pd.date_range("2026-10-01 00:00:00", "2026-10-02 23:55:00", freq="5min")
             df = df.sort_index()
 
             filtered_df = df

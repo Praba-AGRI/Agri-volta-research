@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { api } from '../services/api';
 import { useStore } from '../store/useStore';
 import { Sprout, Sun, Droplets, ShieldCheck, CheckCircle2, Lock, Cpu } from 'lucide-react';
 
@@ -40,9 +40,9 @@ export default function Agronomy() {
       try {
         const params = { zone: selectedZone, mode: datasetMode };
         const [gddRes, etcRes, ksRes] = await Promise.all([
-          axios.get('http://localhost:8000/api/agronomy/gdd', { params }),
-          axios.get('http://localhost:8000/api/agronomy/etc', { params }),
-          axios.get('http://localhost:8000/api/agronomy/ks', { params })
+          api.get('/api/agronomy/gdd', { params }),
+          api.get('/api/agronomy/etc', { params }),
+          api.get('/api/agronomy/ks', { params })
         ]);
         
         setGdd(gddRes.data);
@@ -71,7 +71,7 @@ export default function Agronomy() {
               isField ? 'bg-teal-100 text-teal-800 border-teal-200' : 'bg-amber-100 text-amber-800 border-amber-200'
             }`}>
               {isField ? <ShieldCheck className="w-3.5 h-3.5 mr-1" /> : <Cpu className="w-3.5 h-3.5 mr-1" />}
-              {isField ? 'field_2026_v1' : 'simulation_v1'}
+              {isField ? 'field_2026_oct_v1' : 'simulation_v1'}
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-1">
@@ -134,7 +134,7 @@ export default function Agronomy() {
               </div>
               <div className="flex justify-between items-center py-2 border-b border-slate-100 text-xs">
                 <span className="text-slate-600 font-medium">Data Source</span>
-                <span className="font-bold text-slate-800">{isField ? '22 July – 22 August (Field)' : 'Simulation Engine Model'}</span>
+                <span className="font-bold text-slate-800">{isField ? '01 Oct – 02 Oct 2026 (Field)' : 'Simulation Engine Model'}</span>
               </div>
             </div>
 

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import ReactECharts from 'echarts-for-react';
-import axios from 'axios';
+import { api, getApiUrl } from '../services/api';
 import { useStore } from '../store/useStore';
 import { Download, Filter, BarChart3, ShieldCheck, Cpu } from 'lucide-react';
 
@@ -36,7 +36,7 @@ export default function GraphsTrends() {
         for (const param of selectedParams) {
            let zonesToFetch = selectedZone === 'Both' ? ['A', 'B'] : [selectedZone];
            for (const z of zonesToFetch) {
-              const res = await axios.get('http://localhost:8000/api/history', { params: { ...params, zone: z, parameter: param } });
+              const res = await api.get('/api/history', { params: { ...params, zone: z, parameter: param } });
               const actualData = res.data.data.map((d: any) => ({
                  ...d,
                  quality: d.quality || (isField ? 'VALID' : 'PHYSICS_SIMULATED'),
@@ -64,7 +64,7 @@ export default function GraphsTrends() {
 
   const handleExportCSV = () => {
     const primaryParam = selectedParams[0] || 'soil_moisture';
-    const exportUrl = `http://localhost:8000/api/export/csv?zone=${selectedZone}&parameter=${primaryParam}&resolution=${resolution}&mode=${datasetMode}`;
+    const exportUrl = getApiUrl(`/api/export/csv?zone=${selectedZone}&parameter=${primaryParam}&resolution=${resolution}&mode=${datasetMode}`);
     window.open(exportUrl, '_blank');
   };
 
@@ -147,7 +147,7 @@ export default function GraphsTrends() {
               isField ? 'bg-teal-100 text-teal-800 border-teal-200' : 'bg-amber-100 text-amber-800 border-amber-200'
             }`}>
               {isField ? <ShieldCheck className="w-3.5 h-3.5 mr-1" /> : <Cpu className="w-3.5 h-3.5 mr-1" />}
-              {isField ? 'FIELD ARCHIVE (field_2026_v1)' : 'SIMULATION ENGINE (simulation_v1)'}
+              {isField ? 'FIELD ARCHIVE (field_2026_oct_v1)' : 'SIMULATION ENGINE (simulation_v1)'}
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-1">
@@ -178,10 +178,9 @@ export default function GraphsTrends() {
               onChange={(e) => setTimeRange(e.target.value as any)}
               className="w-full border border-slate-200 rounded-lg p-2 text-xs font-bold text-slate-700 bg-slate-50"
             >
+              <option value="2d">2-Day Field Campaign (01–02 Oct 2026)</option>
               <option value="24h">Last 24 Hours</option>
-              <option value="3d">Last 3 Days</option>
-              <option value="7d">Last 7 Days</option>
-              <option value="30d">Last 30 Days (Full Field Campaign)</option>
+              <option value="7d">Full Campaign Series</option>
             </select>
           </div>
 

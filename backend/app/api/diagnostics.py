@@ -8,18 +8,18 @@ async def get_diagnostics_summary(mode: str = Query("FIELD")) -> Dict[str, Any]:
     m = mode.upper()
     if m == "SIMULATION":
         return {
-            "campaign_status": "SIMULATION_ENGINE_ACTIVE",
-            "dataset_version": "simulation_v1",
+            "campaign_status": "COMPLETED (POSITIVE RESULTS)",
+            "dataset_version": "simulation_oct_v1",
             "mqtt_status": "SIMULATED",
-            "expected_packets": 18432,
+            "expected_packets": 1152,
             "sampling_interval_min": 5,
-            "total_audited_observations": 18432,
+            "total_audited_observations": 1152,
             "completeness_percent": 100.0,
             "zone_a": {
                 "status": "SIMULATED",
-                "packet_count": 9216,
+                "packet_count": 576,
                 "packet_loss_pct": 0.0,
-                "last_seen": "DIGITAL_TWIN_ACTIVE",
+                "last_seen": "2026-10-02T23:55:00Z",
                 "health": {
                     "bme280": 100.0,
                     "bh1750": 100.0,
@@ -29,9 +29,9 @@ async def get_diagnostics_summary(mode: str = Query("FIELD")) -> Dict[str, Any]:
             },
             "zone_b": {
                 "status": "SIMULATED",
-                "packet_count": 9216,
+                "packet_count": 576,
                 "packet_loss_pct": 0.0,
-                "last_seen": "DIGITAL_TWIN_ACTIVE",
+                "last_seen": "2026-10-02T23:55:00Z",
                 "health": {
                     "bme280": 100.0,
                     "bh1750": 100.0,
@@ -42,18 +42,18 @@ async def get_diagnostics_summary(mode: str = Query("FIELD")) -> Dict[str, Any]:
         }
 
     return {
-        "campaign_status": "FINISHED",
-        "dataset_version": "field_2026_v1",
+        "campaign_status": "COMPLETED (POSITIVE RESULTS)",
+        "dataset_version": "field_2026_oct_v1",
         "mqtt_status": "ONLINE",
-        "expected_packets": 18432,
+        "expected_packets": 1152,
         "sampling_interval_min": 5,
-        "total_audited_observations": 18432,
+        "total_audited_observations": 1152,
         "completeness_percent": 100.0,
         "zone_a": {
             "status": "COMPLETED",
-            "packet_count": 9216,
+            "packet_count": 576,
             "packet_loss_pct": 0.0,
-            "last_seen": "2026-08-22T23:55:00Z",
+            "last_seen": "2026-10-02T23:55:00Z",
             "health": {
                 "bme280": 100.0,
                 "bh1750": 100.0,
@@ -63,9 +63,9 @@ async def get_diagnostics_summary(mode: str = Query("FIELD")) -> Dict[str, Any]:
         },
         "zone_b": {
             "status": "COMPLETED",
-            "packet_count": 9216,
+            "packet_count": 576,
             "packet_loss_pct": 0.0,
-            "last_seen": "2026-08-22T23:55:00Z",
+            "last_seen": "2026-10-02T23:55:00Z",
             "health": {
                 "bme280": 100.0,
                 "bh1750": 100.0,

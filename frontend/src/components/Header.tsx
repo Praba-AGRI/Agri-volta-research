@@ -1,10 +1,19 @@
+import { useState, useEffect } from 'react';
 import { Activity, Clock, Database, Layers } from 'lucide-react';
 import { useStore } from '../store/useStore';
 
 export default function Header() {
   const { datasetMode, setDatasetMode } = useStore();
+  const [timeString, setTimeString] = useState(new Date().toLocaleTimeString());
 
   const isField = datasetMode === 'FIELD';
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeString(new Date().toLocaleTimeString());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <>
@@ -16,7 +25,7 @@ export default function Header() {
           <span className="w-2.5 h-2.5 rounded-full bg-white animate-pulse"></span>
           <span>
             {isField
-              ? 'AGRO-VOLT FIELD MODE — REAL-WORLD SENSOR TELEMETRY & SD ARCHIVE'
+              ? 'AGRO-VOLT FIELD MODE — REAL-WORLD SENSOR TELEMETRY & LIVE STREAM'
               : 'AGRO-VOLT SIMULATION MODE — CLOSED-LOOP DIGITAL TWIN ENGINE'}
           </span>
         </div>
@@ -50,7 +59,7 @@ export default function Header() {
       <header className="bg-white border-b border-slate-200 px-6 py-3.5 flex items-center justify-between shadow-sm z-10">
         <div className="flex items-center space-x-3">
           <div className={`p-2 rounded-xl transition-colors ${isField ? 'bg-teal-50 text-teal-700' : 'bg-amber-50 text-amber-700'}`}>
-            <Activity className="w-6 h-6" />
+            <Activity className="w-6 h-6 animate-pulse" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
@@ -69,9 +78,9 @@ export default function Header() {
                 System Online
               </span>
               <span className="text-slate-300">|</span>
-              <span className="flex items-center">
-                <Clock className="w-3 h-3 mr-1" />
-                Last update: {new Date().toLocaleTimeString()}
+              <span className="flex items-center font-mono">
+                <Clock className="w-3 h-3 mr-1 text-teal-600 animate-spin" />
+                Last update: {timeString}
               </span>
               <span className="text-slate-300">|</span>
               <span>Dataset: {isField ? 'field_2026_v1' : 'simulation_v1'}</span>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { api } from '../services/api';
 import { Wifi, CheckCircle2, ShieldCheck, Lock, Cpu } from 'lucide-react';
 import { useStore } from '../store/useStore';
 
@@ -12,7 +12,7 @@ export default function Diagnostics() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get('http://localhost:8000/api/diagnostics/summary', { params: { mode: datasetMode } });
+        const res = await api.get('/api/diagnostics/summary', { params: { mode: datasetMode } });
         setData(res.data);
       } catch (err) {
         console.error("Failed to fetch diagnostics", err);
@@ -47,12 +47,12 @@ export default function Diagnostics() {
               isField ? 'bg-teal-100 text-teal-800 border-teal-200' : 'bg-amber-100 text-amber-800 border-amber-200'
             }`}>
               {isField ? <ShieldCheck className="w-3.5 h-3.5 mr-1" /> : <Cpu className="w-3.5 h-3.5 mr-1" />}
-              {isField ? 'field_2026_v1 AUDITED' : 'simulation_v1 MODEL'}
+              {isField ? 'field_2026_oct_v1 AUDITED' : 'simulation_v1 MODEL'}
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-1">
             {isField
-              ? 'Hardware health, packet delivery audit, and sensor validation for 32-day field experiment campaign.'
+              ? 'Hardware health, packet delivery audit, and sensor validation for 2-day field experiment campaign.'
               : 'Closed-loop digital twin model node diagnostics and virtual data stream health.'}
           </p>
         </div>
@@ -108,7 +108,7 @@ export default function Diagnostics() {
                  </div>
                  <div className="flex justify-between border-b border-slate-100 pb-2">
                     <span className="text-slate-600 font-sans">Audited Observations</span>
-                    <span className="font-bold text-slate-800">18,432 5-min records</span>
+                    <span className="font-bold text-slate-800">1,152 5-min records</span>
                  </div>
                  <div className="flex justify-between border-b border-slate-100 pb-2">
                     <span className="text-slate-600 font-sans">Completeness Ratio</span>

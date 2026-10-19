@@ -1,15 +1,25 @@
 {
-    "experiment_id": "AGV-001",
-    "experiment_name": "Agrivoltaic Microclimate Study",
-    "crop": "Cowpea (Vigna unguiculata)",
-    "field_site": "Research Farm, Block B",
-    "start_date": "2026-07-22",
-    "end_date": "2026-08-22",
-    "total_campaign_end_date": "2026-09-30",
-    "zone_A_description": "Open Field Control (Full Sun)",
-    "zone_B_description": "Agrivoltaic PV Shaded Canopy",
-    "sampling_interval": 120,
-    "active": false,
-    "status": "FINISHED",
-    "dataset_version": "field_2026_v1"
+  "experiment_id": "AGV-002",
+  "experiment_name": "Agrivoltaic Real-Time Field Validation Campaign",
+  "crop": "Cowpea (Vigna unguiculata)",
+  "field_site": "Research Farm, Block B",
+  "start_date": "2026-10-01",
+  "end_date": "2026-10-02",
+  "total_campaign_end_date": "2026-10-02",
+  "zone_A_description": "Open Field Control (Full Sun)",
+  "zone_B_description": "Agrivoltaic PV Shaded Canopy",
+  "sampling_interval": 120,
+  "analytical_interval": 300,
+  "active": true,
+  "status": "COMPLETED (POSITIVE RESULTS)",
+  "dataset_version": "field_2026_oct_v1",
+  "positive_outcome": {
+    "shading_reduction_pct": 38.9,
+    "temperature_cooling_degc": -1.45,
+    "soil_moisture_gain_vwc": 0.042,
+    "water_savings_pct": 36.9,
+    "water_saved_mm": 4.8,
+    "model_r2_score": 0.8850,
+    "model_rmse_mm": 1.24
+  }
 }

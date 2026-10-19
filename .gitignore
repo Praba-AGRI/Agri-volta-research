@@ -18,5 +18,12 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Large cache
+# Large cache & Media
 *.parquet.tmp
+*.mp4
+*.mkv
+*.avi
+proof/
+
+# Vercel
+.vercel/

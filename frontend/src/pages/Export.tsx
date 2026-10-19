@@ -1,16 +1,17 @@
 import { useState } from 'react';
 import { Download, Database, FileText, ShieldCheck, Cpu } from 'lucide-react';
 import { useStore } from '../store/useStore';
+import { getApiUrl } from '../services/api';
 
 export default function Export() {
   const { datasetMode } = useStore();
   const [selectedZone, setSelectedZone] = useState('B');
-  const [dateRange, setDateRange] = useState('7d');
+  const [dateRange, setDateRange] = useState('2d');
 
   const isField = datasetMode === 'FIELD';
 
   const handleExport = () => {
-    const url = `http://localhost:8000/api/export/csv?zone=${selectedZone}&mode=${datasetMode}&start=-${dateRange}&end=now`;
+    const url = getApiUrl(`/api/export/csv?zone=${selectedZone}&mode=${datasetMode}&start=-${dateRange}&end=now`);
     
     const link = document.createElement("a");
     link.setAttribute("href", url);
@@ -33,10 +34,10 @@ export default function Export() {
               isField ? 'bg-teal-100 text-teal-800 border-teal-200' : 'bg-amber-100 text-amber-900 border-amber-200'
             }`}>
               {isField ? <ShieldCheck className="w-3.5 h-3.5 mr-1 text-teal-600" /> : <Cpu className="w-3.5 h-3.5 mr-1 text-amber-600" />}
-              {isField ? 'FIELD ARCHIVE (field_2026_v1)' : 'SIMULATION ENGINE (simulation_v1)'}
+              {isField ? 'FIELD ARCHIVE (field_2026_oct_v1)' : 'SIMULATION ENGINE (simulation_oct_v1)'}
             </span>
           </div>
-          <p className="text-slate-500 text-xs mt-1">Download audited telemetry, ML predictions, and agronomic datasets for external research.</p>
+          <p className="text-slate-500 text-xs mt-1">Download audited telemetry for 2-day real-time validation campaign (Oct 1–2, 2026).</p>
         </div>
       </div>
 
@@ -62,56 +63,49 @@ export default function Export() {
               value={dateRange}
               onChange={e => setDateRange(e.target.value)}
             >
+              <option value="2d">2 Days (Oct 1–2, 2026 Real-Time Campaign)</option>
               <option value="24h">Last 24 Hours</option>
-              <option value="7d">Last 7 Days</option>
-              <option value="30d">Last 30 Days (Full Field Campaign)</option>
-              <option value="season">Entire Season</option>
+              <option value="30d">Full Research Archive</option>
             </select>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="border border-slate-200 rounded-xl p-6 hover:border-teal-300 transition-colors bg-slate-50 group">
-             <div className="flex items-center text-teal-700 mb-4">
-                <Database className="w-8 h-8 mr-3" />
-                <div>
-                   <h3 className="font-bold text-slate-800">
-                     {isField ? 'Audited Field Sensor Telemetry' : 'Simulated Digital Twin Output Data'}
-                   </h3>
-                   <p className="text-xs text-slate-500">Quality-flagged 5-min analytical observations</p>
-                </div>
-             </div>
-             <button 
-               onClick={handleExport}
-               className={`w-full py-2 bg-white border font-bold rounded-lg transition-colors flex justify-center items-center text-xs ${
-                 isField ? 'border-slate-300 text-slate-700 hover:bg-teal-700 hover:text-white' : 'border-slate-300 text-slate-700 hover:bg-amber-700 hover:text-white'
-               }`}
-             >
-               <Download className="w-4 h-4 mr-2" /> Download CSV ({datasetMode} Mode)
-             </button>
+        {/* Dataset Information Summary */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-start space-x-3">
+            <Database className="w-5 h-5 text-teal-700 mt-0.5" />
+            <div>
+              <div className="text-xs font-bold text-slate-700">Source Dataset Provenance</div>
+              <div className="text-sm font-bold text-slate-900 mt-0.5">
+                {isField ? 'SD_ARCHIVE / LIVE (field_2026_oct_v1)' : 'SIMULATION_ENGINE (simulation_oct_v1)'}
+              </div>
+              <p className="text-[11px] text-slate-500 mt-1">5-minute analytical resampled time-series with quality control flags.</p>
+            </div>
           </div>
 
-          <div className="border border-slate-200 rounded-xl p-6 hover:border-indigo-300 transition-colors bg-slate-50 group">
-             <div className="flex items-center text-indigo-600 mb-4">
-                <FileText className="w-8 h-8 mr-3" />
-                <div>
-                   <h3 className="font-bold text-slate-800">Model Predictions & Attributes</h3>
-                   <p className="text-xs text-slate-500">ElasticNet irrigation forecasts & error metrics</p>
-                </div>
-             </div>
-             <button 
-               onClick={handleExport}
-               className="w-full py-2 bg-white border border-slate-300 text-slate-700 font-bold text-xs rounded-lg hover:bg-indigo-600 hover:text-white transition-colors flex justify-center items-center"
-             >
-               <Download className="w-4 h-4 mr-2" /> Download CSV ({datasetMode} Mode)
-             </button>
+          <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-start space-x-3">
+            <FileText className="w-5 h-5 text-blue-700 mt-0.5" />
+            <div>
+              <div className="text-xs font-bold text-slate-700">Campaign Window</div>
+              <div className="text-sm font-bold text-slate-900 mt-0.5">01 Oct 2026 → 02 Oct 2026</div>
+              <p className="text-[11px] text-slate-500 mt-1">2-day real-time validation campaign (576 analytical records per zone).</p>
+            </div>
           </div>
         </div>
-        
-      </div>
-      
-      <div className="text-center text-xs text-slate-500 font-medium mt-4">
-        Active Export Source: <span className="font-bold text-slate-800">{isField ? 'SD_ARCHIVE (field_2026_v1)' : 'SIMULATION_ENGINE (simulation_v1)'}</span>
+
+        {/* Export Button */}
+        <div className="pt-2 flex justify-end">
+          <button 
+            onClick={handleExport}
+            className={`flex items-center space-x-2 px-6 py-2.5 rounded-lg text-sm font-bold text-white shadow-md transition ${
+              isField ? 'bg-teal-700 hover:bg-teal-800' : 'bg-amber-700 hover:bg-amber-800'
+            }`}
+          >
+            <Download className="w-4 h-4" />
+            <span>Download {isField ? 'field_2026_oct_v1' : 'simulation_oct_v1'} CSV</span>
+          </button>
+        </div>
+
       </div>
     </div>
   );
