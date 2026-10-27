@@ -69,11 +69,11 @@
 // SECTION 2 — PHYSICAL PIN ASSIGNMENTS
 // ============================================================================
 
-// --- Dedicated Hardware SPI bus pins for BME280 ---
-#define SPI_MOSI            11
-#define SPI_MISO            13
-#define SPI_SCK             12
-#define BME280_CS           10
+// --- Dedicated Software SPI Pins for BME280 (isolated from SX1262 LoRa) ---
+#define BME_CS              10
+#define BME_MOSI            1                 // Connects to SDI on 7SEMI
+#define BME_MISO            2                 // Connects to SDO on 7SEMI
+#define BME_SCK             7                 // Connects to SCK on 7SEMI
 
 // --- Shared I2C bus pins ---
 #define I2C_SDA             8
@@ -112,7 +112,7 @@
 // SECTION 4 — HARDWARE INSTANCES
 // ============================================================================
 
-Adafruit_BME280     bme(BME280_CS);           // Hardware SPI BME280
+Adafruit_BME280     bme(BME_CS, BME_MOSI, BME_MISO, BME_SCK); // Dedicated Software SPI BME280
 BH1750              lightUp(0x23);            // Upward incident radiation (I2C addr 0x23)
 BH1750              lightDown(0x5C);          // Downward reflected radiation (I2C addr 0x5C)
 OneWire             oneWire(DS18B20_PIN);
@@ -336,15 +336,10 @@ void initAllSensors() {
   // Initialise shared I2C bus
   Wire.begin(I2C_SDA, I2C_SCL);
 
-  // Initialise dedicated Hardware SPI for BME280
-  SPI.begin(SPI_SCK, SPI_MISO, SPI_MOSI, -1);
-  pinMode(BME280_CS, OUTPUT);
-  digitalWrite(BME280_CS, HIGH);
-  delay(10);
-
-  // --- BME280 over Hardware SPI ---
+  // --- BME280 over Dedicated Software SPI (isolated from SX1262 LoRa) ---
   bmeOK = bme.begin();
-  Serial.printf("BME280   [HW SPI CS=%d] : %s\n", BME280_CS, bmeOK ? "DETECTED" : "FAILED");
+  Serial.printf("BME280   [SW SPI CS=%d MOSI=%d MISO=%d SCK=%d] : %s\n",
+                BME_CS, BME_MOSI, BME_MISO, BME_SCK, bmeOK ? "DETECTED" : "FAILED");
   if (bmeOK) {
     bme.setSampling(Adafruit_BME280::MODE_NORMAL,
                     Adafruit_BME280::SAMPLING_X1,   // Temperature
@@ -507,8 +502,8 @@ void readAndPublish() {
   Serial.printf(" Node: %s | Zone: %s | Device: %s\n", NODE_ID, ZONE_NAME, DEVICE_ID);
   Serial.println("================================================================================");
 
-  // [1] Atmospheric Microclimate (BME280 on Hardware SPI)
-  Serial.println(" [1] ATMOSPHERIC MICROCLIMATE (BME280 Hardware SPI):");
+  // [1] Atmospheric Microclimate (BME280 on Dedicated Software SPI)
+  Serial.println(" [1] ATMOSPHERIC MICROCLIMATE (BME280 Software SPI):");
   if (airTemp != INVALID)  Serial.printf("     • Air Temperature        : %.2f °C\n", airTemp);
   else                     Serial.println("     • Air Temperature        : [ERROR / SENSOR DISCONNECTED]");
 

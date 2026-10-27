@@ -22,11 +22,11 @@ firmware/
 
 | Sensor / Module | Interface | ESP32-S3 Pin | Notes |
 | :--- | :--- | :--- | :--- |
-| **BME280** (Temp / Humidity / Pressure) | **Hardware SPI** | | Dedicated bus (no SD contention) |
+| **BME280** (Temp / Humidity / Pressure) | **Dedicated Software SPI** | | Isolated from SX1262 LoRa module |
 | └ BME280 CS | SPI CS | **GPIO 10** | Chip Select |
-| └ BME280 MOSI / SDA | SPI MOSI | **GPIO 11** | Master Out Slave In |
-| └ BME280 MISO / SDO | SPI MISO | **GPIO 13** | Master In Slave Out |
-| └ BME280 SCK / SCL | SPI SCK | **GPIO 12** | Serial Clock |
+| └ BME280 MOSI / SDI | SPI MOSI (SDI) | **GPIO 1** | Connects to SDI on 7SEMI |
+| └ BME280 MISO / SDO | SPI MISO (SDO) | **GPIO 2** | Connects to SDO on 7SEMI |
+| └ BME280 SCK | SPI SCK | **GPIO 7** | Connects to SCK on 7SEMI |
 | **BH1750 (Incident / Solar Rs)** | **Shared I2C** | **GPIO 8 (SDA), GPIO 9 (SCL)** | ADDR pin pulled to GND → Address `0x23` |
 | **BH1750 (Reflected / Albedo Rr)**| **Shared I2C** | **GPIO 8 (SDA), GPIO 9 (SCL)** | ADDR pin pulled to VCC → Address `0x5C` |
 | **DS3231 RTC** | **Shared I2C** | **GPIO 8 (SDA), GPIO 9 (SCL)** | Fixed Address `0x68` (battery backed) |
@@ -36,7 +36,7 @@ firmware/
 | **WS2812 RGB Status LED** | **Digital (RMT)** | **GPIO 48** | Onboard Ozobot Devkit RGB LED |
 
 > [!NOTE]
-> The MicroSD card module was **completely removed** to eliminate bus lockups and hardware SPI contention. The BME280 now has exclusive, uninterrupted access to the hardware SPI bus.
+> The BME280 operates over **Dedicated Software SPI** (`CS=10`, `MOSI=1`, `MISO=2`, `SCK=7`) to completely isolate it from the onboard SX1262 LoRa module and prevent bus conflicts. The MicroSD card module was removed.
 
 ---
 

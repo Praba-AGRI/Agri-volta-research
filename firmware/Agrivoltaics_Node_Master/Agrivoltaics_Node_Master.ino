@@ -1,10 +1,10 @@
 /**
  * ============================================================================
- *           AGRIVOLTAIC RESEARCH SUITE — MASTER NODE FIRMWARE
+ *         AGRIVOLTAIC RESEARCH SUITE — ZONE A CONTROL NODE FIRMWARE
  *                v5.0 — PRODUCTION-READY & SD-FREE STREAMER
  * ============================================================================
  * Board       : 7SEMI ESP32-S3-WROOM-1U N8R8 on Ozobot Devkit
- * Environment : Configurable Master (Zone A Control or Zone B Agrivoltaic)
+ * Environment : Zone A — Open Field Reference / Control (Full Unshaded Sun)
  * Framework   : Arduino ESP32 core v2.0.x / v3.0.x
  * Protocol    : JSON over MQTT to AGRO-VOLT Central Intelligence Dashboard
  * ============================================================================
@@ -14,27 +14,11 @@
 // SECTION 1 — USER CONFIGURATION & CONSTANTS
 // ============================================================================
 
-// --- SELECT ACTIVE FIELD ZONE (Uncomment ONE) ---
-// #define SELECT_ZONE_A       // Zone A: Open Field Control (Full Sun)
-#define SELECT_ZONE_B          // Zone B: Agrivoltaic Canopy (PV Shaded)
-
-#if defined(SELECT_ZONE_A)
-  #define NODE_ID             "NODE_A"
-  #define ZONE                "A"
-  #define ZONE_NAME           "Zone A (Open Field Control)"
-  #define DEVICE_ID           "ESP32_ZONE_A"
-  #define MQTT_TOPIC          "agrivoltaic/zone/A/telemetry"
-  #define SHADE_FRACTION_NOM  0.00f
-#elif defined(SELECT_ZONE_B)
-  #define NODE_ID             "NODE_B"
-  #define ZONE                "B"
-  #define ZONE_NAME           "Zone B (Agrivoltaic Canopy)"
-  #define DEVICE_ID           "ESP32_ZONE_B"
-  #define MQTT_TOPIC          "agrivoltaic/zone/B/telemetry"
-  #define SHADE_FRACTION_NOM  0.389f
-#else
-  #error "Please select either SELECT_ZONE_A or SELECT_ZONE_B."
-#endif
+#define NODE_ID             "NODE_A"
+#define ZONE                "A"
+#define ZONE_NAME           "Zone A (Open Field Control)"
+#define DEVICE_ID           "ESP32_ZONE_A"
+#define SHADE_FRACTION_NOM  0.00f             // Zero artificial shading in Control Zone
 
 // --- Network settings ---
 #define WIFI_SSID           "Sri Ram"
@@ -45,6 +29,7 @@
 #define MQTT_PORT           1883
 #define MQTT_USER           ""                // Leave empty if no authentication
 #define MQTT_PASSWORD       ""
+#define MQTT_TOPIC          "agrivoltaic/zone/A/telemetry"
 
 // --- Clock and transmission settings ---
 #define TZ_OFFSET_SEC       19800             // Indian Standard Time (IST) = UTC + 5:30
@@ -53,6 +38,7 @@
 #define NTP_SERVER_2        "time.nist.gov"
 
 // --- Soil calibration settings ---
+// Set to 1 if you have performed gravimetric/volumetric calibration for your soil type
 #define SOIL_CALIBRATED     1                 // 1 = Calibrated VWC, 0 = Raw ADC only
 #define SOIL_CAL_A          -0.000265f        // Empirical calibration slope
 #define SOIL_CAL_B          0.848f            // Empirical calibration intercept
@@ -83,11 +69,11 @@
 // SECTION 2 — PHYSICAL PIN ASSIGNMENTS
 // ============================================================================
 
-// --- Dedicated Hardware SPI bus pins for BME280 ---
-#define SPI_MOSI            11
-#define SPI_MISO            13
-#define SPI_SCK             12
-#define BME280_CS           10
+// --- Dedicated Software SPI Pins for BME280 (isolated from SX1262 LoRa) ---
+#define BME_CS              10
+#define BME_MOSI            1                 // Connects to SDI on 7SEMI
+#define BME_MISO            2                 // Connects to SDO on 7SEMI
+#define BME_SCK             7                 // Connects to SCK on 7SEMI
 
 // --- Shared I2C bus pins ---
 #define I2C_SDA             8
@@ -126,7 +112,7 @@
 // SECTION 4 — HARDWARE INSTANCES
 // ============================================================================
 
-Adafruit_BME280     bme(BME280_CS);           // Hardware SPI BME280
+Adafruit_BME280     bme(BME_CS, BME_MOSI, BME_MISO, BME_SCK); // Dedicated Software SPI BME280
 BH1750              lightUp(0x23);            // Upward incident radiation (I2C addr 0x23)
 BH1750              lightDown(0x5C);          // Downward reflected radiation (I2C addr 0x5C)
 OneWire             oneWire(DS18B20_PIN);
@@ -350,15 +336,10 @@ void initAllSensors() {
   // Initialise shared I2C bus
   Wire.begin(I2C_SDA, I2C_SCL);
 
-  // Initialise dedicated Hardware SPI for BME280
-  SPI.begin(SPI_SCK, SPI_MISO, SPI_MOSI, -1);
-  pinMode(BME280_CS, OUTPUT);
-  digitalWrite(BME280_CS, HIGH);
-  delay(10);
-
-  // --- BME280 over Hardware SPI ---
+  // --- BME280 over Dedicated Software SPI (isolated from SX1262 LoRa) ---
   bmeOK = bme.begin();
-  Serial.printf("BME280   [HW SPI CS=%d] : %s\n", BME280_CS, bmeOK ? "DETECTED" : "FAILED");
+  Serial.printf("BME280   [SW SPI CS=%d MOSI=%d MISO=%d SCK=%d] : %s\n",
+                BME_CS, BME_MOSI, BME_MISO, BME_SCK, bmeOK ? "DETECTED" : "FAILED");
   if (bmeOK) {
     bme.setSampling(Adafruit_BME280::MODE_NORMAL,
                     Adafruit_BME280::SAMPLING_X1,   // Temperature
@@ -521,8 +502,8 @@ void readAndPublish() {
   Serial.printf(" Node: %s | Zone: %s | Device: %s\n", NODE_ID, ZONE_NAME, DEVICE_ID);
   Serial.println("================================================================================");
 
-  // [1] Atmospheric Microclimate (BME280 on Hardware SPI)
-  Serial.println(" [1] ATMOSPHERIC MICROCLIMATE (BME280 Hardware SPI):");
+  // [1] Atmospheric Microclimate (BME280 on Dedicated Software SPI)
+  Serial.println(" [1] ATMOSPHERIC MICROCLIMATE (BME280 Software SPI):");
   if (airTemp != INVALID)  Serial.printf("     • Air Temperature        : %.2f °C\n", airTemp);
   else                     Serial.println("     • Air Temperature        : [ERROR / SENSOR DISCONNECTED]");
 
