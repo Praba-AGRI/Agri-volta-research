@@ -140,3 +140,59 @@ Telemetry is transmitted as an ISO 8601-timestamped JSON payload directly matchi
   "publish_count": 142
 }
 ```
+
+---
+
+## 🖥️ Arduino IDE Serial Monitor Output & Interactive Commands
+
+Set the Arduino IDE Serial Monitor baud rate to **`115200`** with "Both NL & CR".
+
+### Detailed Sensor Printout Example
+Each telemetry cycle or manual trigger outputs a complete, human-readable breakdown of every sensor reading and computed physical metric:
+
+```text
+================================================================================
+ AGRIVOLTAIC SENSOR TELEMETRY | PACKET #14 | 2026-10-01 12:00:00 IST
+ Node: NODE_A | Zone: Zone A (Control Field - Full Sun) | Device: ESP32_ZONE_A
+================================================================================
+ [1] ATMOSPHERIC MICROCLIMATE (BME280 Hardware SPI):
+     • Air Temperature        : 31.25 °C
+     • Relative Humidity      : 62.40 %
+     • Barometric Pressure    : 1012.30 hPa
+     • Vapor Pressure Deficit : 1.240 kPa
+ [2] SUBSURFACE SOIL MICROCLIMATE (DS18B20 1-Wire & Dual ADC):
+     • Soil Temperature       : 28.90 °C
+     • Soil Moisture Sensor 1 : Raw ADC = 2085 | VWC = 0.245 m³/m³ (24.5 %)
+     • Soil Moisture Sensor 2 : Raw ADC = 2090 | VWC = 0.245 m³/m³ (24.5 %)
+     • Root-Zone Mean Moisture: 0.245 m³/m³ (24.5 %) [Raw Linear Proxy]
+ [3] SOLAR RADIATION & ENERGY BALANCE (Dual BH1750 Shared I2C):
+     • Incident Light (0x23)  : 107600.0 lux -> Rs Incoming  : 850.04 W/m²
+     • Reflected Light (0x5C) :  21520.0 lux -> Rs Reflected : 170.01 W/m²
+     • Surface Albedo (α)     : 0.2000 (20.0 %)
+     • Net Radiation (FAO-56) : 654.53 W/m²
+     • Net Radiation (Measure): 680.03 W/m²
+     • Agrivoltaic Shading    : 0.0 % (Nominal Fraction: 0.000)
+ [4] HARDWARE & NETWORK HEALTH:
+     • Hardware Transducers   : BME280:OK | BH1750-Up:OK | BH1750-Dn:OK | DS18B20:OK | RTC:OK
+     • WiFi Link              : CONNECTED (SSID: Sri Ram | RSSI: -62 dBm | IP: 192.168.1.45)
+     • MQTT Telemetry Link    : CONNECTED (Broker: 10.181.203.89:1883)
+     • MQTT Publish Topic     : agrivoltaic/zone/A/telemetry
+     • Free System Heap       : 248104 bytes
+ [5] OUTGOING MQTT JSON TELEMETRY PAYLOAD:
+     {"device_id":"ESP32_ZONE_A","node_id":"NODE_A","zone":"A","timestamp":"2026-10-01T12:00:00+05:30",...}
+--------------------------------------------------------------------------------
+ [MQTT] SUCCESS -> Published 478 bytes to topic 'agrivoltaic/zone/A/telemetry'
+ [TIP] Send 'r' or Enter in Serial Monitor to trigger immediate reading.
+================================================================================
+```
+
+### ⌨️ Interactive Serial Monitor Commands
+You do not need to wait 2 minutes for the scheduled timer while testing hardware on your workbench. You can type commands directly into the Serial Monitor input field at 115200 baud:
+
+| Key / Command | Action |
+| :--- | :--- |
+| **`r`** or **`Enter`** / **Space** | **Immediate Read & Publish**: Instantly samples all sensors, prints the full diagnostics block, and publishes to MQTT |
+| **`w`** | **WiFi Status**: Prints SSID, local IP address, signal RSSI (dBm), and MAC address |
+| **`m`** | **MQTT Status**: Checks broker connection state, target IP, port, and topic |
+| **`?`** or **`h`** | **Help Menu**: Displays the command summary in the Serial Monitor |
+

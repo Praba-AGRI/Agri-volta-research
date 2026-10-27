@@ -501,22 +501,79 @@ void readAndPublish() {
   String isoTs  = getISO8601();
   bool   mqttUp = mqttClient.connected();
 
-  // Print Formatted Diagnostics to Serial Monitor
-  Serial.println("\n========================================================");
-  Serial.printf("[%s] Telemetry Packet #%lu | %s | %s\n",
-                ts.c_str(), logCount, DEVICE_ID, ZONE_NAME);
-  Serial.println("--------------------------------------------------------");
-  Serial.printf("Atmosphere : T=%.2f C | RH=%.1f %% | P=%.2f hPa | VPD=%.3f kPa\n",
-                airTemp, humidity, pressure, vpd);
-  Serial.printf("Soil       : Tsoil=%.2f C | ADC1=%d | ADC2=%d | Mean VWC=%.3f m3/m3 (%s)\n",
-                soilTemp, soil1, soil2, vwcMean, SOIL_CALIBRATED ? "Calibrated" : "Raw Proxy");
-  Serial.printf("Radiation  : Rs_down=%.2f W/m2 | Rs_up=%.2f W/m2 | Albedo=%.4f\n",
-                rsDown, rsUp, albedo);
-  Serial.printf("Net Energy : Rns_fao=%.2f W/m2 | Rns_meas=%.2f W/m2 | Shading=%.1f %%\n",
-                rnsFAO, rnsMeas, SHADE_FRACTION_NOM * 100.0f);
-  Serial.printf("Hardware   : BME=%d | BH1=%d | BH2=%d | DS18=%d | RTC=%d | WiFi=%d | MQTT=%d\n",
-                bmeOK, bh1OK, bh2OK, ds18OK, rtcOK, wifiOK, mqttUp);
-  Serial.println("========================================================");
+  // Print Detailed Real-Time Sensor Values to Serial Monitor
+  Serial.println("\n================================================================================");
+  Serial.printf(" AGRIVOLTAIC SENSOR TELEMETRY | PACKET #%lu | %s\n", logCount, ts.c_str());
+  Serial.printf(" Node: %s | Zone: %s | Device: %s\n", NODE_ID, ZONE_NAME, DEVICE_ID);
+  Serial.println("================================================================================");
+
+  // [1] Atmospheric Microclimate (BME280 on Hardware SPI)
+  Serial.println(" [1] ATMOSPHERIC MICROCLIMATE (BME280 Hardware SPI):");
+  if (airTemp != INVALID)  Serial.printf("     • Air Temperature        : %.2f °C\n", airTemp);
+  else                     Serial.println("     • Air Temperature        : [ERROR / SENSOR DISCONNECTED]");
+
+  if (humidity != INVALID) Serial.printf("     • Relative Humidity      : %.1f %%\n", humidity);
+  else                     Serial.println("     • Relative Humidity      : [ERROR / SENSOR DISCONNECTED]");
+
+  if (pressure != INVALID) Serial.printf("     • Barometric Pressure    : %.2f hPa\n", pressure);
+  else                     Serial.println("     • Barometric Pressure    : [ERROR / SENSOR DISCONNECTED]");
+
+  if (vpd != INVALID)      Serial.printf("     • Vapor Pressure Deficit : %.3f kPa\n", vpd);
+  else                     Serial.println("     • Vapor Pressure Deficit : [N/A]");
+
+  // [2] Subsurface Soil Microclimate (DS18B20 1-Wire & Dual ADC)
+  Serial.println(" [2] SUBSURFACE SOIL MICROCLIMATE (DS18B20 1-Wire & Dual ADC):");
+  if (soilTemp != INVALID) Serial.printf("     • Soil Temperature       : %.2f °C\n", soilTemp);
+  else                     Serial.println("     • Soil Temperature       : [ERROR / SENSOR DISCONNECTED]");
+
+  if (s1valid) {
+    if (vwc1 != INVALID)   Serial.printf("     • Soil Moisture Sensor 1 : Raw ADC = %4d | VWC = %.3f m³/m³ (%.1f %%)\n", soil1, vwc1, vwc1 * 100.0f);
+    else                   Serial.printf("     • Soil Moisture Sensor 1 : Raw ADC = %4d [ADC out of calibration range]\n", soil1);
+  } else {
+    Serial.println("     • Soil Moisture Sensor 1 : [DISCONNECTED / OPEN-CIRCUIT]");
+  }
+
+  if (s2valid) {
+    if (vwc2 != INVALID)   Serial.printf("     • Soil Moisture Sensor 2 : Raw ADC = %4d | VWC = %.3f m³/m³ (%.1f %%)\n", soil2, vwc2, vwc2 * 100.0f);
+    else                   Serial.printf("     • Soil Moisture Sensor 2 : Raw ADC = %4d [ADC out of calibration range]\n", soil2);
+  } else {
+    Serial.println("     • Soil Moisture Sensor 2 : [DISCONNECTED / OPEN-CIRCUIT]");
+  }
+
+  if (vwcMean != INVALID) {
+    Serial.printf("     • Root-Zone Mean Moisture: %.3f m³/m³ (%.1f %%) [%s]\n",
+                  vwcMean, vwcMean * 100.0f, SOIL_CALIBRATED ? "Field Calibrated" : "Raw Linear Proxy");
+  } else {
+    Serial.println("     • Root-Zone Mean Moisture: [INVALID]");
+  }
+
+  // [3] Solar Radiation & Energy Balance (Dual BH1750 on Shared I2C)
+  Serial.println(" [3] SOLAR RADIATION & ENERGY BALANCE (Dual BH1750 Shared I2C):");
+  if (luxUp != INVALID)    Serial.printf("     • Incident Light (0x23)  : %8.1f lux -> Rs Incoming  : %.2f W/m²\n", luxUp, rsDown);
+  else                     Serial.println("     • Incident Light (0x23)  : [ERROR / SENSOR DISCONNECTED]");
+
+  if (luxDown != INVALID)  Serial.printf("     • Reflected Light (0x5C) : %8.1f lux -> Rs Reflected : %.2f W/m²\n", luxDown, rsUp);
+  else                     Serial.println("     • Reflected Light (0x5C) : [ERROR / SENSOR DISCONNECTED]");
+
+  if (albedo != INVALID)   Serial.printf("     • Surface Albedo (α)     : %.4f (%.1f %%)\n", albedo, albedo * 100.0f);
+  else                     Serial.println("     • Surface Albedo (α)     : [Below Min Threshold / Night]");
+
+  if (rnsFAO != INVALID)   Serial.printf("     • Net Radiation (FAO-56) : %.2f W/m²\n", rnsFAO);
+  if (rnsMeas != INVALID)  Serial.printf("     • Net Radiation (Measure): %.2f W/m²\n", rnsMeas);
+  Serial.printf("     • Agrivoltaic Shading    : %.1f %% (Nominal Fraction: %.3f)\n",
+                SHADE_FRACTION_NOM * 100.0f, SHADE_FRACTION_NOM);
+
+  // [4] System & Hardware Diagnostics
+  Serial.println(" [4] HARDWARE & NETWORK HEALTH:");
+  Serial.printf("     • Hardware Transducers   : BME280:%s | BH1750-Up:%s | BH1750-Dn:%s | DS18B20:%s | RTC:%s\n",
+                bmeOK ? "OK" : "FAIL", bh1OK ? "OK" : "FAIL", bh2OK ? "OK" : "FAIL",
+                ds18OK ? "OK" : "FAIL", rtcOK ? "OK" : "FAIL");
+  Serial.printf("     • WiFi Link              : %s (SSID: %s | RSSI: %d dBm | IP: %s)\n",
+                wifiOK ? "CONNECTED" : "OFFLINE", WIFI_SSID, WiFi.RSSI(), WiFi.localIP().toString().c_str());
+  Serial.printf("     • MQTT Telemetry Link    : %s (Broker: %s:%d)\n",
+                mqttUp ? "CONNECTED" : "DISCONNECTED", MQTT_BROKER, MQTT_PORT);
+  Serial.printf("     • MQTT Publish Topic     : %s\n", MQTT_TOPIC);
+  Serial.printf("     • Free System Heap       : %u bytes\n", ESP.getFreeHeap());
 
   // Publish JSON Telemetry directly to AGRO-VOLT Central Dashboard
   if (wifiOK && mqttUp) {
@@ -571,6 +628,12 @@ void readAndPublish() {
     String payload;
     serializeJson(doc, payload);
 
+    // [5] Print Full JSON Telemetry Payload to Serial Monitor
+    Serial.println(" [5] OUTGOING MQTT JSON TELEMETRY PAYLOAD:");
+    Serial.print("     ");
+    Serial.println(payload);
+    Serial.println("--------------------------------------------------------------------------------");
+
     if (mqttClient.publish(MQTT_TOPIC, payload.c_str(), false)) {
       Serial.printf("[MQTT] SUCCESS -> Published %d bytes to topic '%s'\n",
                     payload.length(), MQTT_TOPIC);
@@ -583,6 +646,8 @@ void readAndPublish() {
     Serial.println("[MQTT] Telemetry skipped — device currently offline.");
     rgbPurple();
   }
+  Serial.println(" [TIP] Send 'r' or Enter in Serial Monitor to trigger immediate reading.");
+  Serial.println("================================================================================\n");
 }
 
 // ============================================================================
@@ -645,8 +710,9 @@ void setup() {
   readAndPublish();
   lastFallbackLog = millis();
 
-  Serial.printf("\n[SCHEDULER] Periodic telemetry active on %d-minute wall-clock boundaries.\n\n",
+  Serial.printf("\n[SCHEDULER] Periodic telemetry active on %d-minute wall-clock boundaries.\n",
                 LOG_INTERVAL_MIN);
+  Serial.println("[SERIAL MONITOR] Press 'r' + Enter at any time to trigger an immediate sensor reading!\n");
 }
 
 // ============================================================================
@@ -656,6 +722,33 @@ void setup() {
 void loop() {
   // Maintain background network and protocol health
   maintainConnections();
+
+  // Serial Monitor Interactive Command Listener (Press 'r' or Enter for on-demand readout)
+  if (Serial.available() > 0) {
+    char cmd = Serial.read();
+    while (Serial.available()) Serial.read(); // flush trailing CR/LF
+    if (cmd == 'r' || cmd == 'R' || cmd == '\n' || cmd == '\r' || cmd == ' ') {
+      Serial.println("\n>>> [MANUAL TRIGGER] User requested immediate sensor reading via Serial Monitor <<<");
+      readAndPublish();
+      lastFallbackLog = millis();
+    } else if (cmd == '?' || cmd == 'h' || cmd == 'H') {
+      Serial.println("\n==================== SERIAL COMMAND MENU ====================");
+      Serial.println(" 'r' or Enter : Trigger immediate reading of all sensors & publish");
+      Serial.println(" 'w'          : Print detailed WiFi connection info");
+      Serial.println(" 'm'          : Check MQTT broker status");
+      Serial.println(" '?'          : Show this menu");
+      Serial.println("=============================================================\n");
+    } else if (cmd == 'w' || cmd == 'W') {
+      Serial.printf("[WIFI] Status: %s | SSID: %s | IP: %s | RSSI: %d dBm | MAC: %s\n",
+                    WiFi.isConnected() ? "CONNECTED" : "DISCONNECTED",
+                    WiFi.SSID().c_str(), WiFi.localIP().toString().c_str(),
+                    WiFi.RSSI(), WiFi.macAddress().c_str());
+    } else if (cmd == 'm' || cmd == 'M') {
+      Serial.printf("[MQTT] Status: %s | Broker: %s:%d | Topic: %s\n",
+                    mqttClient.connected() ? "CONNECTED" : "DISCONNECTED",
+                    MQTT_BROKER, MQTT_PORT, MQTT_TOPIC);
+    }
+  }
 
   // Check scheduled wall-clock boundary using precision DS3231 RTC
   if (rtcOK) {
