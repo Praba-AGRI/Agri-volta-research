@@ -25,7 +25,7 @@
 #define WIFI_PASSWORD       "PASSWORD"
 
 // --- MQTT broker settings ---
-#define MQTT_BROKER         "10.181.203.89"   // Update with host PC / broker IP
+#define MQTT_BROKER         "10.135.242.89"   // Updated to current local PC IP (run 'ipconfig' to verify)   // Update with host PC / broker IP
 #define MQTT_PORT           1883
 #define MQTT_USER           ""                // Leave empty if no authentication
 #define MQTT_PASSWORD       ""

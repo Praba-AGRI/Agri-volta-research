@@ -21,11 +21,11 @@
 #define SHADE_FRACTION_NOM  0.00f             // Zero artificial shading in Control Zone
 
 // --- Network settings ---
-#define WIFI_SSID           "Sri Ram"
-#define WIFI_PASSWORD       "PASSWORD"
+#define WIFI_SSID           "Vivo v30"
+#define WIFI_PASSWORD       "praba#007"
 
 // --- MQTT broker settings ---
-#define MQTT_BROKER         "10.181.203.89"   // Update with host PC / broker IP
+#define MQTT_BROKER         "10.135.242.89"   // Updated to current local PC IP (run 'ipconfig' to verify)   // Update with host PC / broker IP
 #define MQTT_PORT           1883
 #define MQTT_USER           ""                // Leave empty if no authentication
 #define MQTT_PASSWORD       ""

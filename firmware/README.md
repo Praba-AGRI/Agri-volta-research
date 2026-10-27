@@ -76,7 +76,7 @@ Before uploading, check the top of the `.ino` file:
 #define WIFI_PASSWORD       "PASSWORD"         // Your WiFi password
 
 // --- MQTT broker settings ---
-#define MQTT_BROKER         "10.181.203.89"    // IP of your local server / broker
+#define MQTT_BROKER         "10.135.242.89"    // IP of your local server / broker (check via ipconfig)
 #define MQTT_PORT           1883
 #define MQTT_USER           ""                 // Broker username (if required)
 #define MQTT_PASSWORD       ""                 // Broker password (if required)
